@@ -171,6 +171,10 @@ function useDictFormatter<DT extends DictTypes = DictTypes>(
 export function useDicts<DT extends DictTypes = DictTypes>(
   dictTypes: DT[],
   options: UseDictsOptions = {},
+  cb?: (
+    dictsData: DictsRecord<DT>,
+    dictsLoading: DictsLoadingRecord<DT>,
+  ) => void,
 ) {
   const dictsData = reactive({} as DictsRecord<DT>) as DictsRecord<DT>;
   const dictsLoading = reactive(
@@ -218,7 +222,10 @@ export function useDicts<DT extends DictTypes = DictTypes>(
     const dicts = Array.isArray(maybeDictTypeList)
       ? maybeDictTypeList
       : [maybeDictTypeList];
-    return Promise.all(dicts.map(e => loadDictItem(e)));
+    return Promise.all(dicts.map(e => loadDictItem(e))).then((res) => {
+      cb?.(toRaw(dictsData), toRaw(dictsLoading));
+      return res;
+    });
   }
 
   function init() {

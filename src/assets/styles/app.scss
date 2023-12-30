@@ -1,0 +1,182 @@
+/* stylelint-disable at-rule-no-unknown */
+
+.font-500 {
+  font-weight: 500;
+}
+
+.font-bold {
+  font-weight: bold;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-justify {
+  text-align: justify;
+  text-align-last: justify;
+}
+
+@mixin text_overflow_($line) {
+  word-break: break-all; //在恰当的断字点进行换行
+  overflow: hidden; //文字超出的进行隐藏
+  text-overflow: ellipsis; //超出的文字用省略号表示
+  /* stylelint-disable-next-line value-no-vendor-prefix */
+  display: -webkit-box; //将元素设为盒子伸缩模型显示
+  -webkit-box-orient: vertical; //伸缩方向设为垂直方向
+  -webkit-line-clamp: $line; //设定一共3行，超出的部分隐藏，并用省略号来表示
+}
+
+.text-ellipsis {
+  @include text_overflow_(1);
+}
+
+.text-ellipsis-2 {
+  @include text_overflow_(2);
+}
+
+.text-ellipsis-3 {
+  @include text_overflow_(3);
+}
+
+.white-space-nowrap {
+  white-space: nowrap;
+}
+
+// 100%
+
+.w-full {
+  width: 100%;
+}
+
+.h-full {
+  height: 100%;
+}
+
+// 安全区
+.padding-bottom-safe {
+  padding-bottom: 0;
+  padding-bottom: constant(safe-area-inset-bottom);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.bottom-safe {
+  bottom: 0;
+  bottom: constant(safe-area-inset-bottom);
+  bottom: env(safe-area-inset-bottom);
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+// 水平
+.horizontal-center {
+  display: flex;
+  align-items: center;
+}
+// 垂直
+.vertical-center {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.inline-flex {
+  display: inline-flex;
+}
+
+.flex-direction-column {
+  flex-direction: column;
+}
+
+.block {
+  display: block;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-space-between {
+  justify-content: space-between;
+}
+
+.justify-space-around {
+  justify-content: space-around;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+
+.justify-start {
+  justify-content: flex-start;
+}
+
+.items-end {
+  align-items: flex-end;
+}
+
+.items-start {
+  align-items: flex-start;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.flex-shrink-0 {
+  flex-shrink: 0;
+}
+
+.grid {
+  display: grid;
+}
+
+@for $i from 1 through 5 {
+  .grid-cols-#{$i} {
+    grid-template-columns: repeat(#{$i}, minmax(0, 1fr));
+  }
+  .grid-rows-#{$i} {
+    grid-template-rows: repeat(#{$i}, minmax(0, 1fr));
+  }
+}
+
+.container {
+  padding: 20rpx 32rpx;
+  box-sizing: border-box;
+}
+
+.relative {
+  position: relative;
+}
+
+.absolute {
+  position: absolute;
+}

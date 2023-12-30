@@ -27,7 +27,7 @@ export default defineConfig(({ command, mode }) => {
           'vue',
           'vue-router',
           {
-            '@/store/modules': [
+            '@/store': [
               'useAppStore',
               'usePermissionStore',
               'useUserStore',
