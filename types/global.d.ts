@@ -74,7 +74,7 @@ declare type IntervalHandle = ReturnType<typeof setInterval>;
 declare type TimeoutHandle = ReturnType<typeof setTimeout>;
 
 /**
- * @deprecated 任意对象 请使用 object
+ * 任意对象 请使用 object
  */
 declare interface AnyObject {
   [key: string]: any;

@@ -1,7 +1,7 @@
 /**
  * @description 基础数据类型
  */
-declare type ResponseResult<T extends object = object> = {
+declare type ResponseResult<T extends AnyObject = AnyObject> = {
   code: number;
   msg: string;
 } & T;
@@ -10,7 +10,7 @@ declare type ResponseResult<T extends object = object> = {
  * @description 列表数据 ruoyi 返回的是 rows 和 total 如果是其他格式请自定义
  *              注意！ rows 已经 是个 T[] 类型！
  */
-declare type ResponseList<T> = ResponseResult<{
+declare type ResponseList<T> = ResponseResponseResult<{
   total: number;
   rows: T[];
 }>;
@@ -18,7 +18,7 @@ declare type ResponseList<T> = ResponseResult<{
 /**
  * @description 数据类型 包含在 data 里面
  */
-declare type ResponseData<T = any> = ResponseResult<{
+declare type ResponseData<T = any> = ResponseResponseResult<{
   data: T;
 }>;
 

@@ -1,10 +1,8 @@
-export * from './addPrefixUrl';
 export * from './createUUID';
 export * from './debounce-throttle';
 export * from './EventEmitter';
 export * from './format';
 export * from './formatFileSize';
-export * from './generate';
 export * from './getBase64str';
 export * from './getNumericValue';
 export * from './getRandomNumber';
@@ -23,6 +21,5 @@ export * from './props';
 export * from './removeUndefinedKeys';
 export * from './sleep';
 export * from './splitArrayIntoChunks';
-export * from './system';
 export * from './toArrayableValue';
 export * from './uniqueArray';

@@ -169,7 +169,7 @@ export class HttpRequest {
     });
   }
 
-  private transformResponse<T = any>(response: AxiosResponse<Result<T>>) {
+  private transformResponse<T extends AnyObject = AnyObject>(response: AxiosResponse<ResponseResult<T>>) {
     // 处理服务器返回的数据
     const { config, data } = response;
     const options = this.getOptions(config);
@@ -193,7 +193,7 @@ export class HttpRequest {
   }
 
   // 文件上传
-  uploadFile<T = any>(config: AxiosRequestConfig, params: Record<string, any>) {
+  uploadFile<T extends AnyObject = AnyObject>(config: AxiosRequestConfig, params: Record<string, any>) {
     const formData = new window.FormData();
     const customFilename = params.name || 'file';
 
@@ -247,33 +247,33 @@ export class HttpRequest {
 
   // 如果 返回 原生响应 则 => Promise<AxiosResponse<Result<T>>>
   // 否则 => Promise<Result<T>>
-  get<T = any>(config: isReturnNativeResponseHttpRequestOption): Promise<AxiosResponse<Result<T>>>;
-  get<T = any>(config: HttpRequestOptionWithoutMethod): Promise<Result<T>>;
-  get<T = any>(config: HttpRequestOptionWithoutMethod): Promise<Result<T> | AxiosResponse<Result<T>>> {
+  get<T extends AnyObject = AnyObject>(config: isReturnNativeResponseHttpRequestOption): Promise<AxiosResponse<ResponseResult<T>>>;
+  get<T extends AnyObject = AnyObject>(config: HttpRequestOptionWithoutMethod): Promise<ResponseResult<T>>;
+  get<T extends AnyObject = AnyObject>(config: HttpRequestOptionWithoutMethod): Promise<ResponseResult<T> | AxiosResponse<ResponseResult<T>>> {
     return this.request({ ...config, method: 'GET' });
   }
 
-  post<T = any>(config: isReturnNativeResponseHttpRequestOption): Promise<AxiosResponse<Result<T>>>;
-  post<T = any>(config: HttpRequestOptionWithoutMethod): Promise<Result<T>>;
-  post<T = any>(config: HttpRequestOptionWithoutMethod): Promise<Result<T> | AxiosResponse<Result<T>>> {
+  post<T extends AnyObject = AnyObject>(config: isReturnNativeResponseHttpRequestOption): Promise<AxiosResponse<ResponseResult<T>>>;
+  post<T extends AnyObject = AnyObject>(config: HttpRequestOptionWithoutMethod): Promise<ResponseResult<T>>;
+  post<T extends AnyObject = AnyObject>(config: HttpRequestOptionWithoutMethod): Promise<ResponseResult<T> | AxiosResponse<ResponseResult<T>>> {
     return this.request({ ...config, method: 'POST' });
   }
 
-  put<T = any>(config: isReturnNativeResponseHttpRequestOption): Promise<AxiosResponse<Result<T>>>;
-  put<T = any>(config: HttpRequestOptionWithoutMethod): Promise<Result<T>>;
-  put<T = any>(config: HttpRequestOptionWithoutMethod): Promise<Result<T> | AxiosResponse<Result<T>>> {
+  put<T extends AnyObject = AnyObject>(config: isReturnNativeResponseHttpRequestOption): Promise<AxiosResponse<ResponseResult<T>>>;
+  put<T extends AnyObject = AnyObject>(config: HttpRequestOptionWithoutMethod): Promise<ResponseResult<T>>;
+  put<T extends AnyObject = AnyObject>(config: HttpRequestOptionWithoutMethod): Promise<ResponseResult<T> | AxiosResponse<ResponseResult<T>>> {
     return this.request({ ...config, method: 'PUT' });
   }
 
-  delete<T = any>(config: isReturnNativeResponseHttpRequestOption): Promise<AxiosResponse<Result<T>>>;
-  delete<T = any>(config: HttpRequestOptionWithoutMethod): Promise<Result<T>>;
-  delete<T = any>(config: HttpRequestOptionWithoutMethod): Promise<Result<T> | AxiosResponse<Result<T>>> {
+  delete<T extends AnyObject = AnyObject>(config: isReturnNativeResponseHttpRequestOption): Promise<AxiosResponse<ResponseResult<T>>>;
+  delete<T extends AnyObject = AnyObject>(config: HttpRequestOptionWithoutMethod): Promise<ResponseResult<T>>;
+  delete<T extends AnyObject = AnyObject>(config: HttpRequestOptionWithoutMethod): Promise<ResponseResult<T> | AxiosResponse<ResponseResult<T>>> {
     return this.request({ ...config, method: 'DELETE' });
   }
 
-  request<T = any>(config: isReturnNativeResponseHttpRequestOption): Promise<AxiosResponse<Result<T>>>;
-  request<T = any>(config: HttpRequestOption): Promise<Result<T>>;
-  request<T = any>(config: HttpRequestOption): Promise<Result<T> | AxiosResponse<Result<T>>> {
+  request<T extends AnyObject = AnyObject>(config: isReturnNativeResponseHttpRequestOption): Promise<AxiosResponse<ResponseResult<T>>>;
+  request<T extends AnyObject = AnyObject>(config: HttpRequestOption): Promise<ResponseResult<T>>;
+  request<T extends AnyObject = AnyObject>(config: HttpRequestOption): Promise<ResponseResult<T> | AxiosResponse<ResponseResult<T>>> {
     config = this.formatFormData(config);
     return this.axiosInstance.request(config)
       .then((res) => {

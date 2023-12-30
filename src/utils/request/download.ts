@@ -1,10 +1,11 @@
 import type { HttpRequestOption } from './core';
 
+import { isObject } from '@/utils/helpers';
+
 import { HttpRequestError } from './core';
 
-import { httpRequest } from '.';
+import { request } from '.';
 
-import { isObject } from '../is';
 import { saveAs } from 'file-saver';
 
 interface DownloadOptions extends HttpRequestOption {
@@ -35,6 +36,10 @@ function transformRequest(params?: object) {
   return result;
 }
 
+function isBlob(data: any): data is Blob {
+  return data instanceof Blob;
+}
+
 export function download(config: DownloadOptions) {
   function getHeaderFileName(headers: Record<string, any>) {
     const headersFileNameKey = [
@@ -52,7 +57,7 @@ export function download(config: DownloadOptions) {
     });
     return '';
   }
-  return httpRequest
+  return request
     .request({
       ...config,
       transformRequest: [
@@ -65,10 +70,9 @@ export function download(config: DownloadOptions) {
     })
     .then(async (res) => {
       const data = res.data;
-      const isBlob = res.data instanceof Blob;
-      if (isBlob) {
+      if (isBlob(res.data)) {
         if (res.data?.type && !config.filename) {
-          saveAs(res.data);
+          saveAs(res.data as unknown as Blob);
         }
         else {
           const urlList = config.url?.split('/');
@@ -86,6 +90,6 @@ export function download(config: DownloadOptions) {
         throw e;
       }
     }).catch((e) => {
-      httpRequest.requestCallbacks?.onError?.(e.message);
+      request.requestCallbacks?.onError?.(e.message);
     });
 }

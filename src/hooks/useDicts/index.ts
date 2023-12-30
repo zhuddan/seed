@@ -1,11 +1,9 @@
 import type { FormatOptions } from '@/utils/helpers';
-import type { MaybeRefOrGetter } from 'vue';
 
 import { format, logger } from '@/utils/helpers';
 import { request } from '@/utils/request';
 
-import { useComputedRef } from '../useComputedRef';
-import { computed, reactive, toRaw, toRefs } from 'vue';
+import { type MaybeRefOrGetter, computed, reactive, toRaw, toRefs } from 'vue';
 
 export type DictTypes =
 | 'disinfect_mode' // '消毒模式'
@@ -150,9 +148,8 @@ function useDictFormatter<DT extends DictTypes = DictTypes>(
     value: MaybeRefOrGetter<string> | MaybeRefOrGetter<string[]>,
     options: FormatOptions<DictData> = {},
   ): string | Partial<DictData> | Partial<DictData>[] {
-    const valueComputedRef = useComputedRef(value);
     const result = computed(() =>
-      format<DictData>(dictsData[dictKey], valueComputedRef.value, {
+      format<DictData>(dictsData[dictKey], toValue(value), {
         ...options,
         ...defaultFormatDictOptions,
       }),

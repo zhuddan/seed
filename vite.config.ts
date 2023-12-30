@@ -7,7 +7,7 @@ import vueJsx from '@vitejs/plugin-vue-jsx';
 import AutoImport from 'unplugin-auto-import/vite';
 import { defineConfig, loadEnv } from 'vite';
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons';
-
+import { configDefaults } from 'vitest/config';
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
@@ -63,6 +63,14 @@ export default defineConfig(({ command, mode }) => {
       APP_TITLE: JSON.stringify(env.VITE_APP_TITLE),
       APP_API_URL: JSON.stringify(env.VITE_APP_API_URL),
       APP_STATIC_URL: JSON.stringify(env.VITE_APP_STATIC_URL),
+    },
+    /**
+     * test
+     */
+    test: {
+      environment: 'jsdom',
+      exclude: [...configDefaults.exclude, 'e2e/*'],
+      root: fileURLToPath(new URL('./', import.meta.url)),
     },
   };
 });

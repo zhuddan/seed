@@ -1,3 +1,7 @@
+/**
+ * 判断是两个数组是否相同（值）
+ * @param arr
+ */
 function hashArray(arr: any[]): string {
   const result: string[] = [];
 

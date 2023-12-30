@@ -7,7 +7,7 @@ export function getParams(url?: string) {
   const [, search] = _url.split('?');
   if (search && search.length) {
     const paramsList = search.split('&');
-    const params: AnyObject = {};
+    const params: Record<string, any> = {};
     paramsList.forEach((e) => {
       const [key, value] = e.split('=');
       if (value != undefined && value != '') params[key] = value;
@@ -23,7 +23,7 @@ export function getParams(url?: string) {
  * @param params
  * @returns {string}
  */
-export function setParams(baseUrl: string, params: AnyObject): string {
+export function setParams(baseUrl: string, params: Record<string, any>): string {
   if (!Object.keys(params).length) return baseUrl;
   let parameters = '';
   for (const key in params) parameters += `${key}=${encodeURIComponent(params[key])}&`;

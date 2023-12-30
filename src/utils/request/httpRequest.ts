@@ -5,7 +5,7 @@ import { HttpRequest, HttpRequestHeadersContentTypeEnum } from './core';
 import { getCacheToken } from '../cache';
 import Qs from 'qs';
 
-export const httpRequest = new HttpRequest({
+export const request = new HttpRequest({
   // AxiosRequestConfig
   baseURL: APP_API_URL,
   timeout: 2000,
@@ -32,3 +32,4 @@ export const httpRequest = new HttpRequest({
     });
   },
 });
+

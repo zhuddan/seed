@@ -1,22 +1,19 @@
 import { mergeDeep } from '@/utils/helpers';
 
-import { useQuery } from '../useQuery';
-import { onLoad, onPullDownRefresh } from '@dcloudio/uni-app';
 import { type Ref, computed, nextTick, ref } from 'vue';
 
-interface UseDataDetailQuery {
-  [key: string]: number;
-}
-
-type _UseDataDetailQuery = UseDataDetailQuery | undefined;
+// type UseDataDetailQuery = {
+//   [key: string]: number;
+// } | undefined;
 /**
  * @description 根据 query.id 获取详情
  * @param fetch 详情接口
- * @param useDataDetailOption
+ * @param options
  */
-export function useDataDetail<T extends Recordable = Recordable>(
-  fetch: PromiseFn<number, ResponseData<T>>,
-  useDataDetailOption?: {
+export function useDataDetail<T extends object = object>(
+  fetch: (maybeId: numeric) => Promise<ResponseData<T>>,
+
+  options?: {
     /**
      * 立即执行
      */
@@ -43,7 +40,7 @@ export function useDataDetail<T extends Recordable = Recordable>(
     immediate: true,
     loadDataWithRefresher: false,
     idKey: 'id',
-  }, (useDataDetailOption || {}));
+  }, (options || {}));
 
   const data: Ref<T> = ref({}) as Ref<T>;
   const loading = ref(false);
@@ -51,51 +48,36 @@ export function useDataDetail<T extends Recordable = Recordable>(
   const isEmpty = computed(() => {
     return !Object.keys(data.value).length && !loading.value;
   });
+  const route = useRoute();
 
-  let queryOption: _UseDataDetailQuery = undefined;
-
-  if (__DEV__) {
-    if (option.defaultId != undefined) {
-      queryOption = {
-        [idKey]: option.defaultId,
-      };
+  const id = computed(() => {
+    const id = route.query[idKey] as numeric;
+    if (!id && option.defaultId != undefined) {
+      return option.defaultId;
     }
-  }
-  const query = useQuery<UseDataDetailQuery>(queryOption, false);
-  const id = computed(() => query.value[idKey]);
+    return id;
+  });
 
   async function getData() {
-    if (query.value[idKey] == undefined) {
+    if (id.value == undefined) {
       if (!option.loadDataWithoutRefresher) {
         await nextTick();
         loading.value = false;
       }
       // console.warn(`[useDataDetail] onLoad options.${idKey} is undefined`);
       console.warn(`[useDataDetail] onLoad options.${idKey} is undefined`);
-      uni.stopPullDownRefresh();
       return Promise.resolve();
     }
     option.loadDataWithoutRefresher && (loading.value = true);
-    return fetch(query.value[idKey]).then((res) => {
+    return fetch(id.value).then((res) => {
       if (res.data && Object.keys(res.data).length) {
         data.value = res.data;
       }
       option.onComplete?.(data, res.data || {});
     }).finally(() => {
       loading.value = false;
-      uni.stopPullDownRefresh();
     });
   }
-
-  onLoad(() => {
-    if (option.immediate) {
-      getData();
-    }
-  });
-
-  onPullDownRefresh(() => {
-    getData();
-  });
 
   return {
     getData,

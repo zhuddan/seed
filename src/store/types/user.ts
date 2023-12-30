@@ -1,7 +1,7 @@
-import type { UserInfo } from '@/api/model/userModel';
+import type { UserModel } from '@/model/user';
 
 export interface UserState {
-  user: UserInfo | null;
+  user: UserModel | null;
   roles: string[];
   permissions: string[];
 }

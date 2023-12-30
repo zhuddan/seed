@@ -3,7 +3,10 @@
 const b64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
 const b64re = /^(?:[A-Za-z\d+\/]{4})*?(?:[A-Za-z\d+\/]{2}(?:==)?|[A-Za-z\d+\/]{3}=?)?$/;
 
-// btoa
+/**
+ * 实现微信小程序 btoa
+ * @param string
+ */
 export const wxBtoa = function (string: string) {
   string = String(string);
   let bitmap;

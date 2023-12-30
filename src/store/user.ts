@@ -1,7 +1,8 @@
 import type { UserState } from './types/user';
 
 import { getInfo, login } from '@/api/login';
-import { removeToken, setToken } from '@/utils/cache';
+import { removeCacheToken, setCacheToken } from '@/utils/cache';
+
 import { defineStore } from 'pinia';
 
 export const useUserStore = defineStore({
@@ -14,7 +15,7 @@ export const useUserStore = defineStore({
   actions: {
     async login(username: string, password: string, code: string, uuid: string) {
       const res = await login(username, password, code, uuid);
-      setToken(res.token);
+      setCacheToken(res.token);
     },
     logout(): Promise<void> {
       return new Promise((resolve) => {
@@ -30,7 +31,7 @@ export const useUserStore = defineStore({
     },
     resetAllState() {
       this.$reset();
-      removeToken();
+      removeCacheToken();
     },
   },
 });
