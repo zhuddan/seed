@@ -3,3 +3,5 @@ dist
 node_modules
 
 types/auto-imports.d.ts
+
+vite.config.ts.timestamp*
