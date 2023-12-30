@@ -1,7 +1,7 @@
 /**
  * @description 基础数据类型
  */
-declare type ResponseResult<T extends AnyObject = AnyObject> = {
+declare type ResponseResult<T extends object = object> = {
   code: number;
   msg: string;
 } & T;
@@ -31,15 +31,8 @@ declare interface ListParamsBase {
   orderByColumn?: string;
   isAsc?: string;
 }
+
 /**
  * @description 基础分页参数查询
  */
-declare type ListParamsWrapper<T extends Recordable = Recordable> = ListParamsBase & Partial<T>;
-
-declare type ResponseListParamsWrapperPartial<T extends Recordable = Recordable> = Partial<ListParamsBase & T>;
-
-declare type ListQuery<T extends Recordable = Recordable> = ListParamsBase
-| ListParamsWrapper<T>
-| ListParamsWrapper<T>
-| Partial<T>;
-
+declare type ListQuery<T extends object = object> = Partial<ListParamsBase & T>;
