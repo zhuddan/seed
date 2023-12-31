@@ -24,22 +24,22 @@ export interface FormatOptions<T extends object> {
  * @param options
  * @example
  */
-export function format<T extends object, U extends keyof T>(
+export function format<T extends object, U extends keyof T = keyof T>(
   arr: T[],
   value: T[U],
   options: FormatOptions<T> & { isRaw: true }
 ): Partial<T>;
-export function format<T extends object, U extends keyof T>(
+export function format<T extends object, U extends keyof T = keyof T>(
   arr: T[],
   value: T[U][],
   options: FormatOptions<T> & { isRaw: true }
 ): Partial<T>[];
-export function format<T extends object, U extends keyof T>(
+export function format<T extends object, U extends keyof T = keyof T>(
   arr: T[],
   value: T[U] | T[U][],
   options?: FormatOptions<T>
 ): string;
-export function format<T extends object, U extends keyof T>(
+export function format<T extends object, U extends keyof T = keyof T>(
   arr: T[],
   value: T[U] | T[U][],
   options: FormatOptions<T> = {},

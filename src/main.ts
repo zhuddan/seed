@@ -12,9 +12,7 @@ function initApp() {
 
   app.use(createPinia());
   app.use(router);
-
   app.use(globalComponents);
-
   app.mount('#app');
 }
 

@@ -71,6 +71,10 @@ export default defineConfig(({ command, mode }) => {
       environment: 'jsdom',
       exclude: [...configDefaults.exclude, 'e2e/*'],
       root: fileURLToPath(new URL('./', import.meta.url)),
+      // browser: {
+      //   enabled: true,
+      //   name: 'chrome', // browser name is required
+      // },
     },
   };
 });

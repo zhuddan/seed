@@ -46,10 +46,6 @@ export function isNumber(val: unknown): val is number {
   return is(val, 'Number');
 }
 
-export function isPromise<T = any>(val: unknown): val is Promise<T> {
-  return is(val, 'Promise') && isObject(val) && isFunction(val.then) && isFunction(val.catch);
-}
-
 export function isString(val: unknown): val is string {
   return is(val, 'String');
 }
