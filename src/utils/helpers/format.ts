@@ -1,11 +1,19 @@
 export interface FormatOptions<T extends object> {
-  // label 字段
+  /**
+   *  label 字段
+   */
   labelField?: keyof T;
-  // value 字段
+  /**
+   * value 字段
+   */
   valueField?: keyof T;
-  // 是否返回原始数据
+  /**
+   * 是否返回原始数据
+   */
   isRaw?: boolean;
-  // 分隔符
+  /**
+   * 分隔符
+   */
   symbol?: string;
 }
 
@@ -15,69 +23,40 @@ export interface FormatOptions<T extends object> {
  * @param value
  * @param options
  * @example
- * const data = [{ value: '1', label: '男' }, { value: '2', label: '女' }];
- *  1.基础用法
- * const result1 = format(data, '1'); // --> 男
- * console.log('result1', result1);
- * const result2 = format(data, ['1']); // --> 男
- * console.log('result2', result2);
- * const result3 = format(data, ['1', '2']); // --> 男/女
- * console.log('result3', result3);
- * 使用分隔符
- * const result4 = format(data, ['1', '2'], { symbol: '~' }); // --> 男~女
- * console.log('result4', result4);
- * 2. 获取原对象
- * const result5 = format(data, '1', { isRaw: true }); // --> { value: '1', label: '男' }
- * console.log('result5', result5);
- * const result6 = format(data, ['1'], { isRaw: true }); // --> { value: '1', label: '男' } // 视为一个值 而不是 一个数组
- * console.log('result6', result6);
- * const result7 = format(data, ['1', '2'], { isRaw: true }); // --> [{ value: '1', label: '男' }, { value: '2', label: '女' }]
- * console.log('result7', result7);
- * 3. 自定义key
- * const data2 = [{ code: '1', title: '男' }, { code: '2', title: '女' }];
- * const result8 = format(data2, '1', { labelField: 'title', valueField: 'code' }); // --> 男
- * console.log('result8', result8);
  */
-export function format<T extends object>(
+export function format<T extends object, U extends keyof T>(
   arr: T[],
-  value: string,
+  value: T[U],
   options: FormatOptions<T> & { isRaw: true }
 ): Partial<T>;
-export function format<T extends object>(
+export function format<T extends object, U extends keyof T>(
   arr: T[],
-  value: [string],
-  options: FormatOptions<T> & { isRaw: true }
-): Partial<T>;
-export function format<T extends object>(
-  arr: T[],
-  value: string[],
+  value: T[U][],
   options: FormatOptions<T> & { isRaw: true }
 ): Partial<T>[];
-export function format<T extends object>(
+export function format<T extends object, U extends keyof T>(
   arr: T[],
-  value: string | string[],
+  value: T[U] | T[U][],
   options?: FormatOptions<T>
 ): string;
-export function format<T extends object>(
+export function format<T extends object, U extends keyof T>(
   arr: T[],
-  value: string | [string] | string[],
+  value: T[U] | T[U][],
   options: FormatOptions<T> = {},
 ) {
-  const isOneValue = !Array.isArray(value) ;
   const valueList = Array.isArray(value) ? value : [value];
   const labelField = (options?.labelField || 'label') as keyof T;
   const valueField = (options?.valueField || 'value') as keyof T;
+
   const symbol = options?.symbol || '/';
   const isRaw = options?.isRaw || false;
+  const isValueArray = !Array.isArray(value);
 
   const resultList = valueList.map((valueItem) => {
-    const result
-      = arr.find((arrItem) => {
-        return arrItem[valueField] == valueItem;
-      }) || {};
+    const result = arr.find(it => it[valueField] == valueItem) || {};
     return result as Partial<T>;
   });
-  if (isRaw) return isOneValue ? resultList[0] : resultList;
+  if (isRaw) return isValueArray ? resultList[0] : resultList;
 
   return resultList.map(e => e[labelField]).join(symbol);
 }
