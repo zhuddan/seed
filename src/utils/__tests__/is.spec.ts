@@ -1,7 +1,8 @@
-// @vitest-environment jsdom
 import { isArray, isDate, isDef, isNull, isNullOrUnDef, isNumber, isObject, isRegExp, isString, isUnDef, isWindow } from '../helpers';
+import { JSDOM } from 'jsdom';
 import { describe, expect, it } from 'vitest';
-//
+
+const { window } = new JSDOM();
 describe('is', () => {
   it('isDef', () => {
     expect(isDef(1)).toBe(true);
@@ -53,6 +54,6 @@ describe('is', () => {
   });
 
   it('isWindow', () => {
-    expect(isWindow(window)).not.toBe('undefined');
+    expect(isWindow(window)).toBe(true);
   });
 });
