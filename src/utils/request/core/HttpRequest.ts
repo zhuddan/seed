@@ -1,7 +1,6 @@
 import type { HttpHandlers, HttpRequestOption, HttpRequestOptionWithoutMethod, isReturnNativeResponseHttpRequestOption } from './types';
 import type { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 
-import { isHttpRequestError } from './helpers';
 import { HttpRequestDeduplicator } from './HttpRequestDeduplicator';
 import { HttpRequestError } from './HttpRequestError';
 import { HttpRequestHeadersContentTypeEnum, HttpRequestMethodsEnum } from './types';
@@ -189,7 +188,7 @@ export class HttpRequest {
 
   // 检查 token 是否过期
   static isTokenExpired(e: Error | AxiosError | HttpRequestError) {
-    return isHttpRequestError(e) && e.status === 401;
+    return HttpRequestError.isHttpRequestError(e) && e.status === 401;
   }
 
   // 文件上传
