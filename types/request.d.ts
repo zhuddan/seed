@@ -34,6 +34,6 @@ declare interface ListParamsBase {
 /**
  * @description 基础分页参数查询
  */
-declare type ListParamsWrapper<T extends Recordable = Recordable> = ListParamsBase & Partial<T>;
+declare type ListParamsWrapper<T extends AnyObject = AnyObject> = ListParamsBase & Partial<T>;
 
-declare type ListQuery<T extends Recordable = Recordable> = ListParamsBase | ListParamsWrapper<T> | Partial<T>;
+declare type ListQuery<T extends AnyObject = AnyObject> = ListParamsBase | ListParamsWrapper<T> | Partial<T>;
