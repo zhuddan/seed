@@ -42,7 +42,7 @@ router.afterEach((a) => {
     flex: 1;
     overflow-x: hidden;
 
-    &.layout{
+    .layout{
       padding: var(--app-content-padding);
     }
   }
