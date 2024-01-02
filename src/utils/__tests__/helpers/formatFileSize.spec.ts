@@ -1,4 +1,5 @@
-import { formatFileSize } from '../helpers';
+import { formatFileSize } from '@/utils/helpers';
+
 import { describe, expect, it } from 'vitest';
 
 describe('formatFileSize test', () => {

@@ -1,4 +1,5 @@
-import { getNumericValue } from '../helpers';
+import { getNumericValue } from '@/utils/helpers';
+
 import { describe, expect, test } from 'vitest';
 //
 describe('getNumericValue', () => {
