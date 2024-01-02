@@ -51,8 +51,9 @@ export default defineConfig(({ command, mode }) => {
         symbolId: 'icon-[dir]-[name]',
       }),
       Components({
-        resolvers: [VantResolver()],
+        dirs: ['src/components'],
         dts: 'types/components.d.ts',
+        resolvers: [VantResolver()],
       }),
     ],
     resolve: {
