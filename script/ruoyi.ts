@@ -1,8 +1,10 @@
 import fs from 'fs';
+import { URL, fileURLToPath } from 'node:url';
 import path from 'path';
 
 import ejs from 'ejs';
 
+console.log(fileURLToPath(new URL('.', import.meta.url)));
 interface GenerateOptions {
   businessName: string;
   className: string;
@@ -46,14 +48,13 @@ const generateCode = (options: GenerateOptions) => {
     functionName,
     rootName,
   };
-
-  const apiTemplate = ejs.compile(fs.readFileSync(path.resolve(__dirname, 'ruoyi-api.ejs')).toString(), {});
-  const modelTemplate = ejs.compile(fs.readFileSync(path.resolve(__dirname, 'ruoyi-model.ejs')).toString(), {});
+  const apiTemplate = ejs.compile(fs.readFileSync(fileURLToPath(new URL('ruoyi-api.ejs', import.meta.url))).toString(), {});
+  const modelTemplate = ejs.compile(fs.readFileSync(fileURLToPath(new URL('ruoyi-model.ejs', import.meta.url))).toString(), {});
 
   const apiCode = apiTemplate(ejsData);
   const modelCode = modelTemplate(ejsData);
 
-  const srcPath = path.resolve(__dirname, '..', 'src');
+  const srcPath = fileURLToPath(new URL('../src', import.meta.url));
 
   const targetDirApi = path.resolve(srcPath, 'api');
   const targetFileApi = path.resolve(targetDirApi, `${fileName}.ts`);
@@ -83,7 +84,7 @@ const generateCode = (options: GenerateOptions) => {
 
 // Example usage
 generateCode({
-  rootName: 'system',
-  className: 'enter',
-  businessName: '生猪入场',
+  rootName: 'monitor',
+  className: 'operlog',
+  businessName: '日志',
 });
