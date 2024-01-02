@@ -18,3 +18,5 @@ function initApp() {
 initApp();
 
 // 1
+
+// 2
