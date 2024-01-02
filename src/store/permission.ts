@@ -1,13 +1,11 @@
-import type { PermissionState } from './types/permission';
+import {} from '@vue/shared';
+import type { RouteRecordRaw } from 'vue-router';
 
 import { defineStore } from 'pinia';
 
-export const usePermissionStore = defineStore({
-  id: 'permission',
-  state: (): PermissionState => ({
-    routes: [],
-  }),
-  actions: {
-
-  },
+export const usePermissionStore = defineStore('permission', () => {
+  const routes = ref<RouteRecordRaw[]>([]);
+  return {
+    routes,
+  };
 });

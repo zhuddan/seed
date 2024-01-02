@@ -1,37 +1,47 @@
-import type { UserState } from './types/user';
+import type { UserModel } from '@/model/user';
 
-import { getInfo, login } from '@/api/login';
+import { getInfo as _getInfo, login as _login } from '@/api/login';
 import { removeCacheToken, setCacheToken } from '@/utils/cache';
 
 import { defineStore } from 'pinia';
 
-export const useUserStore = defineStore({
-  id: 'user',
-  state: (): UserState => ({
-    user: null,
-    roles: [],
-    permissions: [],
-  }),
-  actions: {
-    async login(username: string, password: string, code: string, uuid: string) {
-      const res = await login(username, password, code, uuid);
-      setCacheToken(res.token);
-    },
-    logout(): Promise<void> {
-      return new Promise((resolve) => {
-        this.resetAllState();
-        resolve();
-      });
-    },
-    async getInfo() {
-      const res = await getInfo();
-      this.user = res.user;
-      this.roles = res.roles;
-      this.permissions = res.permissions;
-    },
-    resetAllState() {
-      this.$reset();
-      removeCacheToken();
-    },
-  },
+export const useUserStore = defineStore('user', () => {
+  const user = ref<UserModel | null>(null);
+  const roles = ref<string[]>([]);
+  const permissions = ref<string[]>([]);
+
+  async function login(username: string, password: string, code: string, uuid: string) {
+    const res = await _login(username, password, code, uuid);
+    setCacheToken(res.token);
+  }
+  function logout() {
+    return new Promise<''>((resolve) => {
+      resetAllState();
+      resolve('');
+    });
+  }
+
+  async function getInfo() {
+    const res = await _getInfo();
+    user.value = res.user;
+    roles.value = res.roles;
+    permissions.value = res.permissions;
+  }
+
+  function resetAllState() {
+    user.value = null;
+    roles.value = [];
+    permissions.value = [];
+    removeCacheToken();
+  }
+
+  return {
+    user,
+    roles,
+    permissions,
+    login,
+    logout,
+    getInfo,
+    resetAllState,
+  };
 });
