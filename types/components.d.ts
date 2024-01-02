@@ -19,6 +19,5 @@ declare module 'vue' {
     VanList: typeof import('vant/es')['List']
     VanPullRefresh: typeof import('vant/es')['PullRefresh']
     VanSpace: typeof import('vant/es')['Space']
-    VantButton: typeof import('vant/es')['tButton']
   }
 }

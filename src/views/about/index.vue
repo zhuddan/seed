@@ -1,5 +1,9 @@
 <script setup lang="ts">
-function useDataList() {}
+function useDataList(
+  fetch,
+) {
+
+}
 
 const list = ref<number[]>([]);
 const loading = ref(false);
