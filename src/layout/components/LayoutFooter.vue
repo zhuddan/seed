@@ -5,7 +5,7 @@ defineOptions({
 </script>
 
 <template>
-  <footer>copyright © vitezz-lite</footer>
+  <footer>copyright © seed</footer>
 </template>
 
 <style scoped>
