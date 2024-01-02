@@ -14,5 +14,8 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     SvgIcon: typeof import('./../src/components/SvgIcon/SvgIcon.vue')['default']
     VanButton: typeof import('vant/es')['Button']
+    VanConfigProvider: typeof import('vant/es')['ConfigProvider']
+    VanSpace: typeof import('vant/es')['Space']
+    VantButton: typeof import('vant/es')['tButton']
   }
 }

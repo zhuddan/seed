@@ -1,5 +1,18 @@
 <template>
-  <h4>WELCOME TO <br><span style="color:var(--color-primary);font-size: 3em;">PROJECT SEED</span></h4>
+  <van-space>
+    <van-button type="primary">
+      按钮
+    </van-button>
+    <van-button type="primary">
+      按钮
+    </van-button>
+    <van-button type="primary">
+      按钮
+    </van-button>
+    <van-button type="primary">
+      按钮
+    </van-button>
+  </van-space>
 </template>
 
 <style scoped>
