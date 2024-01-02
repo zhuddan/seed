@@ -10,7 +10,7 @@ declare type ResponseResult<T extends AnyObject = AnyObject> = {
  * @description 列表数据 ruoyi 返回的是 rows 和 total 如果是其他格式请自定义
  *              注意！ rows 已经 是个 T[] 类型！
  */
-declare type ResponseList<T> = ResponseResponseResult<{
+declare type ResponseList<T> = ResponseResult<{
   total: number;
   rows: T[];
 }>;
@@ -18,7 +18,7 @@ declare type ResponseList<T> = ResponseResponseResult<{
 /**
  * @description 数据类型 包含在 data 里面
  */
-declare type ResponseData<T = any> = ResponseResponseResult<{
+declare type ResponseData<T = any> = ResponseResult<{
   data: T;
 }>;
 
@@ -31,8 +31,9 @@ declare interface ListParamsBase {
   orderByColumn?: string;
   isAsc?: string;
 }
-
 /**
  * @description 基础分页参数查询
  */
-declare type ListQuery<T extends object = object> = Partial<ListParamsBase & T>;
+declare type ListParamsWrapper<T extends Recordable = Recordable> = ListParamsBase & Partial<T>;
+
+declare type ListQuery<T extends Recordable = Recordable> = ListParamsBase | ListParamsWrapper<T> | Partial<T>;

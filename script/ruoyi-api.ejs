@@ -1,0 +1,46 @@
+import type { <%- modelName  %> } from '../model/<%- fileName %>';
+
+import { request } from '@/utils/request';
+/**
+ * <%- businessName %>列表
+ */
+export function list<%- functionName %>(params?: ListQuery<<%- modelName  %>>) {
+  return request.get<ResponseList<<%- modelName  %>>>({
+    url: '/<%- rootName %>/<%- className %>/list',
+    params,
+  });
+}
+/**
+ * 新增<%- businessName %>
+ */
+export function add<%- functionName %>(data: <%- modelName  %>) {
+  return request.post({
+    url: '/<%- rootName %>/<%- className %>',
+    data,
+  });
+}
+/**
+ * 更新<%- businessName %>
+ */
+export function update<%- functionName %>(data: <%- modelName  %>) {
+  return request.put({
+    url: '/<%- rootName %>/<%- className %>',
+    data,
+  });
+}
+/**
+ * <%- businessName %>详情
+ */
+export function get<%- functionName %>(id: number) {
+  return request.get<ResponseData<<%- modelName  %>>>({
+    url: `/<%- rootName %>/<%- className %>/${id}`,
+  });
+}
+/**
+ * 删除<%- businessName %>
+ */
+export function del<%- functionName %>(id: number) {
+  return request.delete<ResponseData<<%- modelName  %>>>({
+    url: `/<%- rootName %>/<%- className %>/${id}`,
+  });
+}
