@@ -16,7 +16,3 @@ function initApp() {
 }
 
 initApp();
-
-// 11
-
-// 22
