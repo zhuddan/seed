@@ -39,9 +39,8 @@ router.afterEach((a) => {
   }
 
   #content {
-    flex: 1;
     overflow-x: hidden;
-
+    height: var(--app-content-height);
     .layout{
       padding: var(--app-content-padding);
     }
