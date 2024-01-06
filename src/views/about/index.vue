@@ -17,10 +17,6 @@ function useDataList<T extends AnyObject>(
    *  搜索过滤 默认 ()=>({})
    */
     filter?: MaybeRefOrGetter<Partial<T>> | ComputedRef<Partial<T>>;
-    /**
-     *  是否监听 filter 自动进行刷新 默认false
-     */
-    // immediate?: boolean;
   } = {},
 ) {
   const {
@@ -33,13 +29,13 @@ function useDataList<T extends AnyObject>(
   /**
    * 分页参数
    */
-  const pageParamsRef = ref(pageParams) as Ref<ListParamsBase>;
+  const paramsRef = ref(pageParams) as Ref<ListParamsBase>;
   /**
    * 查询参数
    */
   const params = computed(() => {
     return {
-      ...pageParamsRef.value,
+      ...paramsRef.value,
       ...toValue(filter),
     } as ListParamsWrapper<T>;
   });
@@ -51,6 +47,7 @@ function useDataList<T extends AnyObject>(
    * 列表数据
    */
   const list = ref<T[]>([]) as Ref<T[]>;
+
   /**
    * 是否加载
    */
@@ -64,49 +61,64 @@ function useDataList<T extends AnyObject>(
    */
   const error = ref(false);
   /**
+   * 是否空数据
+   */
+  const empty = computed(() => !error.value && !list.value.length);
+  /**
    * 错误信息
    */
   const errorMessage = ref('');
   /**
    * 是否刷新
    */
+  const isFresh = ref(true);
+  /**
+   * 是否刷新 用户下拉刷新动作
+   */
   const refreshing = ref(false);
-
   /**
    * 禁止刷新
    */
   const enablePullRefresh = computed(() => {
-    /**
-     * 没有数据且报错了 即第一次请求就报错了
-     */
-    return !((list.value.length == 0) && error.value);
+    return !loading.value;
   });
-  async function onLoad() {
+
+  async function getData() {
     /**
      * __DEV 测试
      */
     await sleep();
+    console.log('pageNum', paramsRef.value.pageNum);
+    console.log('pageSize', paramsRef.value.pageSize);
+    console.log('error.value', error.value);
     fetch({
       ...params.value,
     }).then((res) => {
-      if (refreshing.value) {
-        refreshing.value = false;
+      const nextListValue: T[] = isFresh.value
+        ? [...res.rows]
+        : [...list.value, ...res.rows];
+
+      const errorNumber = Math.random();
+      /**
+       * dev bug test
+       */
+      if (errorNumber > .9) {
+        throw new Error(errorNumber.toFixed(2));
       }
-
-      const nextListValue: T[] = refreshing.value ? [
-        ...res.rows,
-      ] : [
-        ...list.value,
-        ...res.rows,
-      ];
-
+      console.log(nextListValue);
       if (!isEqual(nextListValue, list.value)) {
         list.value = [...nextListValue];
       }
       total.value = res.total;
       finished.value = list.value.length >= total.value;
       if (!finished.value) {
-        pageParamsRef.value.pageNum += 1;
+        paramsRef.value.pageNum += 1;
+      }
+      if (refreshing.value) {
+        refreshing.value = false;
+      }
+      if (isFresh.value) {
+        isFresh.value = false;
       }
       loading.value = false;
     }).catch((e) => {
@@ -118,24 +130,69 @@ function useDataList<T extends AnyObject>(
 
   function onRefresh() {
     finished.value = false;
-    pageParamsRef.value.pageNum = 1;
+    isFresh.value = true;
     loading.value = true;
-    onLoad();
+    paramsRef.value.pageNum = 1;
+    getData();
   };
+
+  function onSearch() {
+    isFresh.value = true;
+    loading.value = true;
+    paramsRef.value.pageNum = 1;
+    getData();
+  }
+
+  function getList() {
+    /**
+     * loading
+     */
+    if (loading.value) {
+      return getData();
+    }
+
+    /**
+     * 如果刷新的话 设置 pageNum = 1
+     */
+    if (isFresh.value) {
+      paramsRef.value.pageNum = 1;
+      return getData();
+    }
+
+    /**
+     * 错误时候 重新请求
+     */
+    if (error.value) {
+      return getData();
+    }
+    /**
+     * 没有更多数据的话拦截
+     */
+    if (finished.value) {
+      return Promise.resolve();
+    }
+
+    paramsRef.value.pageNum++;
+    return getData();
+  }
 
   return {
     list,
     loading,
     finished,
     error,
+    isFresh,
     refreshing,
     errorMessage,
     enablePullRefresh,
+    empty,
+    getList,
     onRefresh,
-    onLoad,
+    onSearch,
   };
 }
 
+const title = ref('');
 const {
   list,
   loading,
@@ -144,37 +201,66 @@ const {
   refreshing,
   errorMessage,
   enablePullRefresh,
+  empty,
   onRefresh,
-  onLoad,
-} = useDataList(listOperlog);
+  getList,
+  onSearch,
+} = useDataList(listOperlog, {
+  filter() {
+    return {
+      title: title.value,
+    };
+  },
+});
 </script>
 
 <template>
-  <div style="height2: var(--app-content-height);">
-    <van-pull-refresh
-      v-model="refreshing"
-      finished-text="finished-text"
-      loading-text="loadingxxx"
-      :disabled="!enablePullRefresh"
-      @refresh="onRefresh"
+  <div style="height: var(--app-content-height);">
+    <van-search
+      v-model="title"
+      shape="round"
+      background="#4fc08d"
+      placeholder="请输入搜索关键词"
+      @search="onSearch()"
+    />
+    <div
+      class="list-container"
+      :style="{
+        height: 'calc(var(--app-content-height) - 20px - var(--van-search-input-height))',
+        overflowY: 'scroll',
+      }"
     >
-      <van-list
-        v-model:loading="loading"
-        v-model:error="error"
-        :finished="finished"
-        finished-text="没有更多了"
-        :error-text="errorMessage"
-        @load="onLoad"
+      <van-pull-refresh
+        v-model="refreshing"
+        finished-text="finished-text"
+        loading-text="loading"
+        :disabled="!enablePullRefresh"
+        @refresh="onRefresh"
       >
-        <van-cell
-          v-for="item in list"
-          :key="item.operId"
-          :title="item.title"
-          label="描述信息"
-          :value="item.operId"
-        />
-      </van-list>
-    </van-pull-refresh>
+        <van-list
+          v-model:loading="loading"
+          v-model:error="error"
+          :finished="finished"
+          finished-text="没有更多了"
+          :error-text="errorMessage"
+          @load="getList"
+        >
+          <van-cell
+            v-for="item in list"
+            :key="item.operId"
+            :title="item.title"
+            label="描述信息"
+            :value="item.operId"
+          />
+          <template #finished>
+            <van-empty v-if="empty" description="没有更多数据了" />
+            <template v-else>
+              暂无数据
+            </template>
+          </template>
+        </van-list>
+      </van-pull-refresh>
+    </div>
   </div>
 </template>
 
