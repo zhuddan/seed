@@ -35,6 +35,18 @@ export default defineConfig(({ command, mode }) => {
               'useUserStore',
             ],
           },
+          {
+            '@/hooks': [
+              'useContent',
+              'useDataDetail',
+              'useDataList',
+              'useDebounceRef',
+              'useDicts',
+              'useThrottleRef',
+              'useToggle',
+              'useVModel',
+            ],
+          },
         ],
         dts: './types/auto-imports.d.ts',
         eslintrc: {

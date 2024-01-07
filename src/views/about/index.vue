@@ -1,209 +1,5 @@
 <script setup lang="ts">
-import type { MaybeRefOrGetter } from 'vue';
-
 import { listUser } from '@/api/user';
-import { sleep } from '@/utils/helpers';
-
-import { isEqual } from 'lodash-es';
-
-function useDataList<T extends AnyObject>(
-  fetch: (params: ListQuery<T>) => Promise<ResponseList<T>>,
-  options: {
-    /**
-     * 分页参数 默认 { pageNum: 1, pageSize: 10 }
-     */
-    pageParams?: Partial<ListParamsBase>;
-    /**
-     *  搜索过滤 默认 ()=>({})
-     */
-    filter?: MaybeRefOrGetter<Partial<T>> | ComputedRef<Partial<T>>;
-  } = {},
-) {
-  const {
-    pageParams = {
-      pageNum: 1,
-      pageSize: 20,
-    },
-    filter = () => ({}),
-  } = options;
-  /**
-   * 分页参数
-   */
-  const paramsRef = ref(pageParams) as Ref<ListParamsBase>;
-  /**
-   * 查询参数
-   */
-  const params = computed(() => {
-    console.log(toValue(filter));
-    return {
-      ...paramsRef.value,
-      ...toValue(filter),
-    } as ListParamsWrapper<T>;
-  });
-  /**
-   * 数据总长度
-   */
-  const total = ref(0);
-  /**
-   * 列表数据
-   */
-  const list = ref<T[]>([]) as Ref<T[]>;
-
-  /**
-   * 是否加载
-   */
-  const listLoading = ref(false);
-  /**
-   * 数据加载loading
-   */
-  const loading = ref(false);
-  /**
-   * 是否完成
-   */
-  const finished = ref(false);
-  /**
-   * 是否错误
-   */
-  const error = ref(false);
-  /**
-   * 是否空数据
-   */
-  const empty = computed(() => !error.value && !list.value.length);
-  /**
-   * 错误信息
-   */
-  const errorMessage = ref('');
-  /**
-   * 是否刷新
-   */
-  const isFresh = ref(true);
-  /**
-   * 是否刷新 用户下拉刷新动作
-   */
-  const refreshing = ref(false);
-  /**
-   * 禁止刷新
-   */
-  const enablePullRefresh = computed(() => {
-    return !listLoading.value;
-  });
-
-  async function getData() {
-    await sleep(200);
-    console.log('pageNum', paramsRef.value.pageNum);
-    console.log('pageSize', paramsRef.value.pageSize);
-    console.log('error.value', error.value);
-    loading.value = true;
-    /**
-     * __DEV 测试
-     */
-    console.log(params.value);
-    fetch(params.value)
-      .then((res) => {
-        const nextListValue: T[] = isFresh.value
-          ? [...res.rows]
-          : [...toRaw(list.value), ...res.rows];
-
-        if (!isEqual(nextListValue, list.value)) {
-          list.value = [...nextListValue];
-        }
-
-        total.value = res.total;
-        finished.value = list.value.length >= total.value;
-        if (!finished.value) {
-          paramsRef.value.pageNum += 1;
-        }
-        if (refreshing.value) {
-          refreshing.value = false;
-        }
-        if (isFresh.value) {
-          isFresh.value = false;
-        }
-        listLoading.value = false;
-        loading.value = false;
-      }).catch((e) => {
-        errorMessage.value = `请求失败[${e.message}],点击重新加载` || '未知错误';
-        error.value = true;
-        listLoading.value = false;
-        loading.value = false;
-      });
-  };
-
-  /**
-   * 用户手动触发下拉刷新
-   */
-  function onRefresh() {
-    isFresh.value = true;
-    listLoading.value = true;
-    error.value = false;
-    finished.value = false;
-    paramsRef.value.pageNum = 1;
-    return getData();
-  };
-
-  /**
-   * 搜索
-   */
-  function onSearch() {
-    isFresh.value = true;
-    listLoading.value = true;
-    error.value = false;
-    finished.value = false;
-    paramsRef.value.pageNum = 1;
-    return getData();
-  }
-
-  /**
-   * 查询
-   */
-  function getList() {
-    /**
-     * loading
-     */
-    if (loading.value) {
-      return Promise.resolve();
-    }
-
-    /**
-     * 如果刷新的话 设置 pageNum = 1
-     */
-    if (isFresh.value) {
-      paramsRef.value.pageNum = 1;
-      return getData();
-    }
-
-    /**
-     * 错误时候 重新请求
-     */
-    if (error.value) {
-      return getData();
-    }
-    /**
-     * 没有更多数据的话拦截
-     */
-    if (finished.value) {
-      return Promise.resolve('finished');
-    }
-
-    paramsRef.value.pageNum++;
-    return getData();
-  }
-
-  return {
-    list,
-    listLoading,
-    finished,
-    error,
-    isFresh,
-    refreshing,
-    errorMessage,
-    enablePullRefresh,
-    empty,
-    getList,
-    onRefresh,
-    onSearch,
-  };
-}
 
 const title = ref('');
 
@@ -240,7 +36,6 @@ const {
       @search="onSearch()"
     />
     <div
-      class="list-container"
       :style="{
         height: 'calc(var(--app-content-height) - 20px - var(--van-search-input-height))',
         overflowY: 'scroll',
@@ -253,28 +48,45 @@ const {
         :disabled="!enablePullRefresh"
         @refresh="onRefresh"
       >
-        <van-list
-          v-model:loading="listLoading"
-          v-model:error="error"
-          :finished="finished"
-          finished-text="没有更多了"
-          :error-text="errorMessage"
-          @load="getList"
+        <div
+          :style="{
+            'min-height': 'calc(var(--app-content-height) - 20px - var(--van-search-input-height))',
+          }"
         >
-          <van-cell
-            v-for="item in list"
-            :key="item.userId"
-            :title="item.userName"
-            label="描述信息"
-            :value="item.nickName"
-          />
-          <template #finished>
-            <van-empty v-if="empty" description="没有更多数据了" />
-            <template v-else>
-              暂无更多数据
+          <van-list
+            v-model:loading="listLoading"
+            v-model:error="error"
+            :finished="finished"
+            @load="getList"
+          >
+            <van-cell
+              v-for="item in list"
+              :key="item.userId"
+              :title="item.userName"
+              label="描述信息"
+              :value="item.nickName"
+            />
+            <template v-if="!error" #finished>
+              <van-empty v-if="empty" image="search" description="没有更多数据了" />
+              <template v-else>
+                暂无更多数据
+              </template>
             </template>
-          </template>
-        </van-list>
+
+            <template #loading>
+              <template v-if="!refreshing">
+                加载中...
+              </template>
+            </template>
+
+            <template #error>
+              <van-empty v-if="!list.length" image="error" :description="errorMessage" />
+              <template v-else>
+                {{ errorMessage }}2222
+              </template>
+            </template>
+          </van-list>
+        </div>
       </van-pull-refresh>
     </div>
   </div>
