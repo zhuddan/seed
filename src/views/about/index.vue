@@ -88,14 +88,14 @@ function useDataList<T extends AnyObject>(
   });
 
   async function getData() {
-    /**
-     * __DEV 测试
-     */
-    await sleep();
     console.log('pageNum', paramsRef.value.pageNum);
     console.log('pageSize', paramsRef.value.pageSize);
     console.log('error.value', error.value);
     loading.value = true;
+    /**
+     * __DEV 测试
+     */
+    await sleep();
     fetch({
       ...params.value,
     }).then((res) => {
