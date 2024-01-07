@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { MaybeRefOrGetter } from 'vue';
 
-import { listOperlog } from '@/api/operlog';
+import { listUser } from '@/api/user';
 import { sleep } from '@/utils/helpers';
 
 import { isEqual } from 'lodash-es';
@@ -34,6 +34,7 @@ function useDataList<T extends AnyObject>(
    * 查询参数
    */
   const params = computed(() => {
+    console.log(toValue(filter));
     return {
       ...paramsRef.value,
       ...toValue(filter),
@@ -88,6 +89,7 @@ function useDataList<T extends AnyObject>(
   });
 
   async function getData() {
+    await sleep(200);
     console.log('pageNum', paramsRef.value.pageNum);
     console.log('pageSize', paramsRef.value.pageSize);
     console.log('error.value', error.value);
@@ -95,62 +97,65 @@ function useDataList<T extends AnyObject>(
     /**
      * __DEV 测试
      */
-    await sleep();
-    fetch({
-      ...params.value,
-    }).then((res) => {
-      const nextListValue: T[] = isFresh.value
-        ? [...res.rows]
-        : [...toRaw(list.value), ...res.rows];
+    console.log(params.value);
+    fetch(params.value)
+      .then((res) => {
+        const nextListValue: T[] = isFresh.value
+          ? [...res.rows]
+          : [...toRaw(list.value), ...res.rows];
 
-      /**
-       * dev bug test
-       */
-      const errorNumber = Math.random();
-      if (errorNumber > .9) {
-        throw new Error(errorNumber.toFixed(2));
-      }
+        if (!isEqual(nextListValue, list.value)) {
+          list.value = [...nextListValue];
+        }
 
-      if (!isEqual(nextListValue, list.value)) {
-        list.value = [...nextListValue];
-      }
-
-      total.value = res.total;
-      finished.value = list.value.length >= total.value;
-      if (!finished.value) {
-        paramsRef.value.pageNum += 1;
-      }
-      if (refreshing.value) {
-        refreshing.value = false;
-      }
-      if (isFresh.value) {
-        isFresh.value = false;
-      }
-      listLoading.value = false;
-      loading.value = false;
-    }).catch((e) => {
-      errorMessage.value = `请求失败[${e.message}],点击重新加载` || '未知错误';
-      error.value = true;
-      listLoading.value = false;
-      loading.value = false;
-    });
+        total.value = res.total;
+        finished.value = list.value.length >= total.value;
+        if (!finished.value) {
+          paramsRef.value.pageNum += 1;
+        }
+        if (refreshing.value) {
+          refreshing.value = false;
+        }
+        if (isFresh.value) {
+          isFresh.value = false;
+        }
+        listLoading.value = false;
+        loading.value = false;
+      }).catch((e) => {
+        errorMessage.value = `请求失败[${e.message}],点击重新加载` || '未知错误';
+        error.value = true;
+        listLoading.value = false;
+        loading.value = false;
+      });
   };
 
+  /**
+   * 用户手动触发下拉刷新
+   */
   function onRefresh() {
-    finished.value = false;
     isFresh.value = true;
     listLoading.value = true;
+    error.value = false;
+    finished.value = false;
     paramsRef.value.pageNum = 1;
-    getData();
+    return getData();
   };
 
+  /**
+   * 搜索
+   */
   function onSearch() {
     isFresh.value = true;
     listLoading.value = true;
+    error.value = false;
+    finished.value = false;
     paramsRef.value.pageNum = 1;
-    getData();
+    return getData();
   }
 
+  /**
+   * 查询
+   */
   function getList() {
     /**
      * loading
@@ -214,10 +219,12 @@ const {
   onRefresh,
   getList,
   onSearch,
-} = useDataList(listOperlog, {
+} = useDataList(listUser, {
   filter() {
     return {
-      title: title.value,
+      // title: title.value,
+      // operIp: '183.54.208.219',
+      userName: title.value,
     };
   },
 });
@@ -256,15 +263,15 @@ const {
         >
           <van-cell
             v-for="item in list"
-            :key="item.operId"
-            :title="item.title"
+            :key="item.userId"
+            :title="item.userName"
             label="描述信息"
-            :value="item.operId"
+            :value="item.nickName"
           />
           <template #finished>
             <van-empty v-if="empty" description="没有更多数据了" />
             <template v-else>
-              暂无数据
+              暂无更多数据
             </template>
           </template>
         </van-list>

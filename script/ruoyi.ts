@@ -84,7 +84,7 @@ const generateCode = (options: GenerateOptions) => {
 
 // Example usage
 generateCode({
-  rootName: 'monitor',
-  className: 'operlog',
-  businessName: '日志',
+  rootName: 'system',
+  className: 'user',
+  businessName: '用户',
 });
