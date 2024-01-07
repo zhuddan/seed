@@ -14,8 +14,8 @@ function useDataList<T extends AnyObject>(
      */
     pageParams?: Partial<ListParamsBase>;
     /**
-   *  搜索过滤 默认 ()=>({})
-   */
+     *  搜索过滤 默认 ()=>({})
+     */
     filter?: MaybeRefOrGetter<Partial<T>> | ComputedRef<Partial<T>>;
   } = {},
 ) {
@@ -51,6 +51,10 @@ function useDataList<T extends AnyObject>(
   /**
    * 是否加载
    */
+  const listLoading = ref(false);
+  /**
+   * 数据加载loading
+   */
   const loading = ref(false);
   /**
    * 是否完成
@@ -80,7 +84,7 @@ function useDataList<T extends AnyObject>(
    * 禁止刷新
    */
   const enablePullRefresh = computed(() => {
-    return !loading.value;
+    return !listLoading.value;
   });
 
   async function getData() {
@@ -91,24 +95,26 @@ function useDataList<T extends AnyObject>(
     console.log('pageNum', paramsRef.value.pageNum);
     console.log('pageSize', paramsRef.value.pageSize);
     console.log('error.value', error.value);
+    loading.value = true;
     fetch({
       ...params.value,
     }).then((res) => {
       const nextListValue: T[] = isFresh.value
         ? [...res.rows]
-        : [...list.value, ...res.rows];
+        : [...toRaw(list.value), ...res.rows];
 
-      const errorNumber = Math.random();
       /**
        * dev bug test
        */
+      const errorNumber = Math.random();
       if (errorNumber > .9) {
         throw new Error(errorNumber.toFixed(2));
       }
-      console.log(nextListValue);
+
       if (!isEqual(nextListValue, list.value)) {
         list.value = [...nextListValue];
       }
+
       total.value = res.total;
       finished.value = list.value.length >= total.value;
       if (!finished.value) {
@@ -120,10 +126,12 @@ function useDataList<T extends AnyObject>(
       if (isFresh.value) {
         isFresh.value = false;
       }
+      listLoading.value = false;
       loading.value = false;
     }).catch((e) => {
       errorMessage.value = `请求失败[${e.message}],点击重新加载` || '未知错误';
       error.value = true;
+      listLoading.value = false;
       loading.value = false;
     });
   };
@@ -131,14 +139,14 @@ function useDataList<T extends AnyObject>(
   function onRefresh() {
     finished.value = false;
     isFresh.value = true;
-    loading.value = true;
+    listLoading.value = true;
     paramsRef.value.pageNum = 1;
     getData();
   };
 
   function onSearch() {
     isFresh.value = true;
-    loading.value = true;
+    listLoading.value = true;
     paramsRef.value.pageNum = 1;
     getData();
   }
@@ -148,7 +156,7 @@ function useDataList<T extends AnyObject>(
      * loading
      */
     if (loading.value) {
-      return getData();
+      return Promise.resolve();
     }
 
     /**
@@ -169,7 +177,7 @@ function useDataList<T extends AnyObject>(
      * 没有更多数据的话拦截
      */
     if (finished.value) {
-      return Promise.resolve();
+      return Promise.resolve('finished');
     }
 
     paramsRef.value.pageNum++;
@@ -178,7 +186,7 @@ function useDataList<T extends AnyObject>(
 
   return {
     list,
-    loading,
+    listLoading,
     finished,
     error,
     isFresh,
@@ -195,7 +203,7 @@ function useDataList<T extends AnyObject>(
 const title = ref('');
 const {
   list,
-  loading,
+  listLoading,
   finished,
   error,
   refreshing,
@@ -238,7 +246,7 @@ const {
         @refresh="onRefresh"
       >
         <van-list
-          v-model:loading="loading"
+          v-model:loading="listLoading"
           v-model:error="error"
           :finished="finished"
           finished-text="没有更多了"
