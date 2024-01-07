@@ -1,3 +1,3 @@
 // Generated IconType...
 // cspell:disable
-declare type SvgIconType = 'logo';
+declare type SvgIconType = 'logo' | 'search';

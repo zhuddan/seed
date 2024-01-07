@@ -66,7 +66,7 @@ export function useDataList<T extends AnyObject>(
   /**
    * 是否空数据
    */
-  const empty = computed(() => !error.value && !list.value.length);
+  const empty = computed(() => !list.value.length);
   /**
    * 错误信息
    */
@@ -87,15 +87,18 @@ export function useDataList<T extends AnyObject>(
   });
 
   async function getData() {
-    await sleep(200);
-    console.log('pageNum', paramsRef.value.pageNum);
-    console.log('pageSize', paramsRef.value.pageSize);
-    console.log('error.value', error.value);
     loading.value = true;
     /**
      * __DEV 测试
      */
+    await sleep(1200);
+    console.log('pageNum', paramsRef.value.pageNum);
+    console.log('pageSize', paramsRef.value.pageSize);
+    console.log('error.value', error.value);
     console.log(params.value);
+    if (Date.now()) {
+      return;
+    }
     fetch(params.value)
       .then((res) => {
         const nextListValue: T[] = isFresh.value
