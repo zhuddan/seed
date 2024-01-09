@@ -1,7 +1,5 @@
 import type { UserInfo } from '@/model/user';
 
-import { request } from '@/utils/request';
-
 // 获取验证码
 export function getCodeImg() {
   return request.get<ResponseResult<{ img: string; uuid: string }>>(

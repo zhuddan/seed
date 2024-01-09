@@ -1,7 +1,5 @@
 import type { ComputedRef, MaybeRefOrGetter } from 'vue';
 
-import { isFunction } from '@/utils/helpers';
-
 import { computed, unref } from 'vue';
 
 /**
