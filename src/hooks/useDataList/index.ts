@@ -1,7 +1,5 @@
 import type { ComputedRef, MaybeRefOrGetter } from 'vue';
 
-import { sleep } from '@/utils/helpers';
-
 import { isEqual } from 'lodash-es';
 
 export function useDataList<T extends AnyObject>(

@@ -1,7 +1,4 @@
-import type { FormatOptions } from '@/utils/helpers';
-
-import { format, logger } from '@/utils/helpers';
-import { request } from '@/utils/request';
+import type { FormatOptions } from '@/utils/helpers/format';
 
 import { type MaybeRefOrGetter, computed, reactive, toRaw, toRefs } from 'vue';
 

@@ -1,6 +1,5 @@
 import type { OperlogModel } from '../model/operlog';
 
-import { request } from '@/utils/request';
 /**
  * 日志列表
  */

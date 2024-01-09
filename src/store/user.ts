@@ -1,7 +1,6 @@
 import type { UserModel } from '@/model/user';
 
 import { getInfo as _getInfo, login as _login } from '@/api/login';
-import { removeCacheToken, setCacheToken } from '@/utils/cache';
 
 import { defineStore } from 'pinia';
 

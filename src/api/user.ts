@@ -1,6 +1,5 @@
 import type { UserModel } from '../model/user';
 
-import { request } from '@/utils/request';
 /**
  * 用户列表
  */

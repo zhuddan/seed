@@ -31,8 +31,9 @@ export default defineConfig(({ command, mode }) => {
         ],
         dts: './types/auto-imports.d.ts',
         dirs: [
-          'src/hooks',
+          'src/hooks/**',
           'src/store',
+          'src/utils/**',
         ],
         eslintrc: {
           enabled: false, // Default `false`

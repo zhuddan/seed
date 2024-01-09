@@ -1,7 +1,5 @@
 import type { Ref, UnwrapRef, WritableComputedRef } from 'vue';
 
-import { isDef } from '@/utils/helpers';
-
 import { computed, getCurrentInstance, ref, watch } from 'vue';
 
 export interface UseVModelOptions<T, Passive extends boolean = false> {
