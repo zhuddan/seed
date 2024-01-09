@@ -66,6 +66,12 @@ const {
               :title="item.userName"
               label="描述信息"
               :value="item.nickName"
+              clickable
+              is-link
+              :to="{
+                path: './detail',
+                query: { id: item.userId },
+              }"
             />
 
             <template #loading>
