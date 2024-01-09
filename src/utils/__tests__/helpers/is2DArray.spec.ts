@@ -1,5 +1,3 @@
-import { is2DArray } from '@/utils/helpers';
-
 import { expect, it } from 'vitest';
 
 it('is2DArray', () => {
