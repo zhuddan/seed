@@ -1,10 +1,7 @@
 import type { HttpRequestOption } from './core';
 
-import { isObject } from '@/utils/helpers';
-
 import { HttpRequestError } from './core';
-
-import { request } from '.';
+import { request } from './httpRequest';
 
 import { saveAs } from 'file-saver';
 

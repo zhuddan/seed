@@ -1,12 +1,12 @@
 import type { CSSProperties } from 'vue';
 
-export function mapStyle(record: CSSProperties) {
+function mapStyle(record: CSSProperties) {
   return Object.keys(record)
     .map(key => `${key}:${record[`${key as keyof CSSProperties}`]}`)
     .join(';');
 }
 
-export function bg(background: string) {
+function bg(background: string) {
   const res = mapStyle({
     background,
     padding: '2px 5px',
@@ -18,7 +18,7 @@ export function bg(background: string) {
   return res;
 }
 
-export function text(color: string) {
+function text(color: string) {
   return mapStyle({
     color,
     'font-weight': '600',

@@ -1,5 +1,3 @@
-import { getBase64str } from '@/utils/helpers';
-
 import { expect, test } from 'vitest';
 //
 // describe('getBase64str', () => {
