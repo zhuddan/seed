@@ -4,14 +4,7 @@ import { request } from '@/utils/request';
 /**
  * 用户列表
  */
-export function listUser(params?: ListQuery<UserModel>) {
-  /**
-         * dev bug test
-         */
-  // const errorNumber = Math.random();
-  // if (errorNumber > .5) {
-  //   return Promise.reject(new Error(errorNumber.toFixed(2)));
-  // }
+export async function listUser(params?: ListQuery<UserModel>) {
   return request.get<ResponseList<UserModel>>({
     url: '/system/user/list',
     params,

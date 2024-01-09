@@ -32,7 +32,6 @@ export function useDataList<T extends AnyObject>(
    * 查询参数
    */
   const params = computed(() => {
-    console.log(toValue(filter));
     return {
       ...paramsRef.value,
       ...toValue(filter),
@@ -80,6 +79,10 @@ export function useDataList<T extends AnyObject>(
    */
   const refreshing = ref(false);
   /**
+   * 是否搜索
+   */
+  const isSearch = ref(false);
+  /**
    * 禁止刷新
    */
   const enablePullRefresh = computed(() => {
@@ -115,6 +118,9 @@ export function useDataList<T extends AnyObject>(
           refreshing.value = false;
           isFresh.value = false;
         }
+        if (isSearch.value) {
+          isSearch.value = false;
+        }
         listLoading.value = false;
         loading.value = false;
       }).catch((e) => {
@@ -127,6 +133,9 @@ export function useDataList<T extends AnyObject>(
           isFresh.value = false;
           list.value = [];
           finished.value = true;
+        }
+        if (isSearch.value) {
+          isSearch.value = false;
         }
       });
   };
@@ -151,7 +160,9 @@ export function useDataList<T extends AnyObject>(
     listLoading.value = true;
     error.value = false;
     finished.value = false;
+    isSearch.value = true;
     paramsRef.value.pageNum = 1;
+    list.value = [];
     return getData();
   }
 
@@ -201,6 +212,7 @@ export function useDataList<T extends AnyObject>(
     errorMessage,
     enablePullRefresh,
     empty,
+    isSearch,
     getList,
     onRefresh,
     onSearch,

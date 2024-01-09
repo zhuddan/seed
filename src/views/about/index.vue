@@ -8,11 +8,11 @@ const {
   listLoading,
   finished,
   error,
-  isFresh,
   refreshing,
   errorMessage,
   enablePullRefresh,
   empty,
+  isSearch,
   onRefresh,
   getList,
   onSearch,
@@ -70,13 +70,13 @@ const {
 
             <template #loading>
               <div
-                v-if="empty || isFresh" class="flex-center"
+                v-if="empty && isSearch" class="flex-center flex-direction-column"
                 :style="{
                   height: 'calc(var(--app-content-height) - 20px - var(--van-search-input-height))',
                 }"
               >
                 <!-- list 为空时 使用 svg -->
-                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="margin: auto; display: block; shape-rendering: auto;" width="200px" height="200px" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
+                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="200px" height="200px" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
                   <g transform="translate(50 50)">
                     <g transform="scale(0.8)">
                       <g transform="translate(-50 -50)">
@@ -89,9 +89,12 @@ const {
                     </g>
                   </g>
                 </svg>
+                <p style="line-height: 1;">
+                  正在搜索
+                </p>
               </div>
 
-              <template v-else>
+              <template v-else-if="!refreshing">
                 加载中...
               </template>
             </template>
