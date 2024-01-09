@@ -1,89 +1,45 @@
-import type { Ref } from 'vue';
-
-import { merge } from 'lodash-es';
-
-// type UseDataDetailQuery = {
-//   [key: string]: number;
-// } | undefined;
-/**
- * @description 根据 query.id 获取详情
- * @param fetch 详情接口
- * @param options
- */
-export function useDataDetail<T extends object = object>(
-  fetch: (maybeId: numeric) => Promise<ResponseData<T>>,
-
-  options?: {
-    /**
-     * 立即执行
-     */
+export function useDataDetail<T, Q extends numeric = number>(
+  fetch: ((params: Q) => Promise<ResponseData<T>>),
+  options: {
+    name?: string;
     immediate?: boolean;
-    /**
-     * 默认id debug only
-     */
-    defaultId?: number;
-    /**
-     * 请求完成时
-     */
-    onComplete?: (dataRef: Ref<T>, responseData: T) => void;
-    /**
-     * 结合 refresh-view 加载数据时候 是否被动触发下列动画 是否设置loading 为 true
-     */
-    loadDataWithoutRefresher?: boolean;
-    /**
-     * idKey 默认string
-     */
-    idKey?: string;
-  },
+  } = {},
 ) {
-  const option = merge({
-    immediate: true,
-    loadDataWithRefresher: false,
-    idKey: 'id',
-  }, (options || {}));
-
-  const data: Ref<T> = ref({}) as Ref<T>;
+  const { name = 'id', immediate = true } = options;
+  const query = useRouteQuery(name, null, { transform: Number }) as Ref<Q>;
+  const data = ref({}) as Ref<T>;
+  const error = ref(false);
+  const errorMessage = ref('');
+  const pullRefreshLoading = ref(false);
   const loading = ref(false);
-  const idKey = option.idKey!;
-  const isEmpty = computed(() => {
-    return !Object.keys(data.value).length && !loading.value;
-  });
-  const route = useRoute();
-
-  const id = computed(() => {
-    const id = route.query[idKey] as numeric;
-    if (!id && option.defaultId != undefined) {
-      return option.defaultId;
-    }
-    return id;
-  });
-
   async function getData() {
-    if (id.value == undefined) {
-      if (!option.loadDataWithoutRefresher) {
-        await nextTick();
+    if (query.value && !loading.value) {
+      loading.value = true;
+      try {
+        data.value = (await fetch(query.value)).data;
+        error.value = false;
+      }
+      catch (e: any) {
+        error.value = true;
+        errorMessage.value = (e?.message != null && e?.message != 'null' && e?.message != undefined)
+          ? e?.message
+          : '出现错误！';
+      }
+      finally {
+        pullRefreshLoading.value = false;
         loading.value = false;
       }
-      // console.warn(`[useDataDetail] onLoad options.${idKey} is undefined`);
-      console.warn(`[useDataDetail] onLoad options.${idKey} is undefined`);
-      return Promise.resolve();
     }
-    option.loadDataWithoutRefresher && (loading.value = true);
-    return fetch(id.value).then((res) => {
-      if (res.data && Object.keys(res.data).length) {
-        data.value = res.data;
-      }
-      option.onComplete?.(data, res.data || {});
-    }).finally(() => {
-      loading.value = false;
-    });
   }
 
+  watch(query, getData, { immediate });
+
   return {
-    getData,
-    isEmpty,
+    query,
     data,
-    loading,
-    id,
+    errorMessage,
+    error,
+    pullRefreshLoading,
+    getData,
   };
 }
