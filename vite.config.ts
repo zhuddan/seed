@@ -28,6 +28,14 @@ export default defineConfig(({ command, mode }) => {
         imports: [
           'vue',
           'vue-router',
+          '@vueuse/core',
+          {
+            '@vueuse/router': [
+              'useRouteHash',
+              'useRouteParams',
+              'useRouteQuery',
+            ],
+          },
         ],
         dts: './types/auto-imports.d.ts',
         dirs: [
