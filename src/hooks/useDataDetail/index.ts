@@ -1,4 +1,6 @@
-import { type Ref, computed, nextTick, ref } from 'vue';
+import type { Ref } from 'vue';
+
+import { merge } from 'lodash-es';
 
 // type UseDataDetailQuery = {
 //   [key: string]: number;
@@ -34,7 +36,7 @@ export function useDataDetail<T extends object = object>(
     idKey?: string;
   },
 ) {
-  const option = mergeDeep({
+  const option = merge({
     immediate: true,
     loadDataWithRefresher: false,
     idKey: 'id',
