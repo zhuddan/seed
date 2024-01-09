@@ -8,10 +8,10 @@ export function listUser(params?: ListQuery<UserModel>) {
   /**
          * dev bug test
          */
-  const errorNumber = Math.random();
-  if (errorNumber > .5) {
-    return Promise.reject(new Error(errorNumber.toFixed(2)));
-  }
+  // const errorNumber = Math.random();
+  // if (errorNumber > .5) {
+  //   return Promise.reject(new Error(errorNumber.toFixed(2)));
+  // }
   return request.get<ResponseList<UserModel>>({
     url: '/system/user/list',
     params,
