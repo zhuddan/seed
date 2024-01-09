@@ -96,9 +96,6 @@ export function useDataList<T extends AnyObject>(
     console.log('pageSize', paramsRef.value.pageSize);
     console.log('error.value', error.value);
     console.log(params.value);
-    if (Date.now()) {
-      return;
-    }
     fetch(params.value)
       .then((res) => {
         const nextListValue: T[] = isFresh.value
