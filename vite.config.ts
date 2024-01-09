@@ -28,27 +28,12 @@ export default defineConfig(({ command, mode }) => {
         imports: [
           'vue',
           'vue-router',
-          {
-            '@/store': [
-              'useAppStore',
-              'usePermissionStore',
-              'useUserStore',
-            ],
-          },
-          {
-            '@/hooks': [
-              'useContent',
-              'useDataDetail',
-              'useDataList',
-              'useDebounceRef',
-              'useDicts',
-              'useThrottleRef',
-              'useToggle',
-              'useVModel',
-            ],
-          },
         ],
         dts: './types/auto-imports.d.ts',
+        dirs: [
+          'src/hooks',
+          'src/store',
+        ],
         eslintrc: {
           enabled: false, // Default `false`
           filepath: './.eslintrc-auto-import.json', // Default `./.eslintrc-auto-import.json`
