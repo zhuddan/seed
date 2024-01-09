@@ -1,8 +1,6 @@
+import { merge } from 'lodash-es';
 import { type Ref, computed, nextTick, ref } from 'vue';
 
-// type UseDataDetailQuery = {
-//   [key: string]: number;
-// } | undefined;
 /**
  * @description 根据 query.id 获取详情
  * @param fetch 详情接口
@@ -34,7 +32,7 @@ export function useDataDetail<T extends object = object>(
     idKey?: string;
   },
 ) {
-  const option = mergeDeep({
+  const option = merge({
     immediate: true,
     loadDataWithRefresher: false,
     idKey: 'id',
