@@ -16,6 +16,13 @@ export const baseRoutes: RouteRecordRaw[] = [
     component: () => import('@/views/about/index.vue'),
   },
   {
+    path: '/detail',
+    meta: {
+      title: 'detail',
+    },
+    component: () => import('@/views/about/detail.vue'),
+  },
+  {
     path: '/login',
     meta: {
       title: '登录',
