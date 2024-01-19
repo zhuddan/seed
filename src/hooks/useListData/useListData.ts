@@ -101,7 +101,7 @@ export function useListData<T extends AnyObject = AnyObject>(
   } = {},
 ) {
   const {
-    params: { pageNum = 1, pageSize = 20 } = {},
+    params: { pageNum = 1, pageSize = 3 } = {},
     empty: _Empty = list => list.length == 0,
     filter = () => ({}),
     // flush = 'mounted',

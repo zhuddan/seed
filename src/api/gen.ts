@@ -4,7 +4,7 @@ import type { GenModel } from '../model/gen';
  * 代码生成列表
  */
 export async function listGen(params?: ListQuery<GenModel>) {
-  await sleep(2e3);
+  // await sleep(2e3);
   // if (global) {
   //   throw new Error('haha');
   // }
