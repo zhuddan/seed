@@ -3,5 +3,8 @@ import Layout from '@/layout/index.vue';
 </script>
 
 <template>
-  <Layout />
+  <i-custom-logo />
+  <i-inline-foo />
+  <i-inline-async />
+  <!-- <Layout /> -->
 </template>

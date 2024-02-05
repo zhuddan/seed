@@ -1,21 +1,13 @@
 import fs from 'fs';
-import { URL, fileURLToPath } from 'node:url';
 import path from 'path';
 
 import ejs from 'ejs';
 
-console.log(fileURLToPath(new URL('.', import.meta.url)));
 interface GenerateOptions {
   businessName: string;
   className: string;
   rootName: string;
 }
-
-// function insertString(originalString: string, insertion: string, position: number): string {
-//   const firstPart = originalString.substring(0, position);
-//   const secondPart = originalString.substring(position);
-//   return firstPart + insertion + secondPart;
-// }
 
 function toUpperCamelCase(input: string): string {
   // 首先将字符串按照空格或下划线拆分为单词数组
@@ -48,13 +40,14 @@ const generateCode = (options: GenerateOptions) => {
     functionName,
     rootName,
   };
-  const apiTemplate = ejs.compile(fs.readFileSync(fileURLToPath(new URL('ruoyi-api.ejs', import.meta.url))).toString(), {});
-  const modelTemplate = ejs.compile(fs.readFileSync(fileURLToPath(new URL('ruoyi-model.ejs', import.meta.url))).toString(), {});
+
+  const apiTemplate = ejs.compile(fs.readFileSync(path.resolve(__dirname, 'ruoyi-api.ejs')).toString(), {});
+  const modelTemplate = ejs.compile(fs.readFileSync(path.resolve(__dirname, 'ruoyi-model.ejs')).toString(), {});
 
   const apiCode = apiTemplate(ejsData);
   const modelCode = modelTemplate(ejsData);
 
-  const srcPath = fileURLToPath(new URL('../src', import.meta.url));
+  const srcPath = path.resolve(__dirname, '..', 'src/renderer/src');
 
   const targetDirApi = path.resolve(srcPath, 'api');
   const targetFileApi = path.resolve(targetDirApi, `${fileName}.ts`);
@@ -84,7 +77,7 @@ const generateCode = (options: GenerateOptions) => {
 
 // Example usage
 generateCode({
-  rootName: 'monitor',
-  className: 'operlog',
-  businessName: '日志',
+  rootName: 'system',
+  className: 'orderWeight',
+  businessName: '生猪过磅',
 });
