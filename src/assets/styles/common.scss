@@ -193,7 +193,7 @@ button {
 }
 
 /* stylelint-disable-next-line at-rule-no-unknown */
-@for $i from 1 through 5 {
+@for $i from 1 through 10 {
   .grid-cols-#{$i} {
     grid-template-columns: repeat(#{$i}, minmax(0, 1fr));
   }
