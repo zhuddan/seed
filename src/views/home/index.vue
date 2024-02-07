@@ -24,18 +24,21 @@ const icons = [
 </script>
 
 <template>
-  <div class="box">
-    <div v-for="(item, index) in icons" :key="index" class="item">
-      <component :is="item" />
-    </div>
-    <div class="item">
-      <i-twemoji-flag-china />
-    </div>
-    <div class="item">
-      <i-twemoji-flag-aruba />
-    </div>
-    <div class="item">
-      <i-icon-logo style="width: 2em;" />
+  <div class="container">
+    <h1>{{ $app_name }}</h1>
+    <div class="box">
+      <div v-for="(item, index) in icons" :key="index" class="item">
+        <component :is="item" />
+      </div>
+      <div class="item">
+        <i-twemoji-flag-china />
+      </div>
+      <div class="item">
+        <i-twemoji-flag-aruba />
+      </div>
+      <div class="item">
+        <i-icon-logo style="width: 2em;" />
+      </div>
     </div>
   </div>
 </template>

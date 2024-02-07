@@ -14,6 +14,7 @@ declare global {
   const HttpRequestHeadersContentTypeEnum: typeof import('../src/utils/request/core/types')['HttpRequestHeadersContentTypeEnum']
   const HttpRequestMethodsEnum: typeof import('../src/utils/request/core/types')['HttpRequestMethodsEnum']
   const ORDER_TABS: typeof import('../src/utils/const/index')['ORDER_TABS']
+  const OrderTabs: typeof import('../src/utils/const/index')['OrderTabs']
   const appEnvLog: typeof import('../src/utils/app/app-info')['appEnvLog']
   const asyncComputed: typeof import('@vueuse/core')['asyncComputed']
   const autoResetRef: typeof import('@vueuse/core')['autoResetRef']

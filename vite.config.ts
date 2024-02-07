@@ -37,12 +37,17 @@ export default defineConfig(({ command, mode }) => {
               'useRouteQuery',
             ],
           },
+          // {
+          //   from: 'src/hooks/useDicts/types',
+          //   imports: ['DictData'],
+          //   type: true,
+          // },
         ],
         dts: './types/auto-imports.d.ts',
         dirs: [
-          'src/hooks/**',
+          'src/hooks',
           'src/store',
-          'src/utils/**',
+          'src/utils',
         ],
         eslintrc: {
           enabled: false, // Default `false`

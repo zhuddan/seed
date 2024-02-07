@@ -1,3 +1,5 @@
+import type { DictData } from '@/hooks/useDicts';
+
 export const ORDER_TABS: DictData[] = [
   {
     label: '全部',

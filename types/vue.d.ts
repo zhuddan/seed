@@ -9,7 +9,7 @@ export interface Permission extends HTMLElement {
  type vPermission = Directive<Permission, string[]>;
 declare module 'vue' {
   interface ComponentCustomProperties {
-
+    $app_name: string;
   }
   interface ComponentCustomProperties {
     vPermission: vPermission;
