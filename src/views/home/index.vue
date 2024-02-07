@@ -34,7 +34,9 @@ const icons = [
     <div class="item">
       <i-twemoji-flag-aruba />
     </div>
-    <i-icon-logo />
+    <div class="item">
+      <i-icon-logo style="width: 2em;" />
+    </div>
   </div>
 </template>
 
