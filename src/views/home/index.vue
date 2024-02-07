@@ -47,8 +47,9 @@ const icons = [
 .box{
   display: grid;
   padding: 10px;
-  grid-template-columns: repeat(15,auto);
+  grid-template-columns: repeat(8,auto);
   gap: 10px;
+  width: 30em;
 }
 .item{
   flex-shrink: 1;
