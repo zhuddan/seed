@@ -1,7 +1,8 @@
 import yargs from 'yargs';
+import { hideBin } from 'yargs/helpers';
 
 export function getArgv() {
-  const argv = yargs
+  const argv = yargs(hideBin(process.argv))
     .option('env', {
       // alias: 'e',
       describe: '环境变量',
