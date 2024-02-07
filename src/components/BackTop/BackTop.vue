@@ -37,7 +37,6 @@ useEventListener(document, 'scroll', handleScrollThrottled);
 <template>
   <Transition name="bounce">
     <button v-if="visible" @click="scrollToTop">
-      <svg-icon name="logo" size="18" />
     </button>
   </Transition>
 </template>

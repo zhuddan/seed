@@ -11,12 +11,11 @@ import IconsResolver from 'unplugin-icons/resolver';
 import Icons from 'unplugin-icons/vite';
 import Components from 'unplugin-vue-components/vite';
 import { defineConfig, loadEnv } from 'vite';
-import { createSvgIconsPlugin } from 'vite-plugin-svg-icons';
 import { configDefaults } from 'vitest/config';
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
-  const isBuild = command === 'build';
+  // const isBuild = command === 'build';
   return {
     plugins: [
       vue(),
@@ -53,13 +52,6 @@ export default defineConfig(({ command, mode }) => {
         },
       }),
       // svg
-      createSvgIconsPlugin({
-        iconDirs: [fileURLToPath(new URL('./src/assets/icons', import.meta.url))],
-        svgoOptions: isBuild,
-        // default
-        symbolId: 'icon-[dir]-[name]',
-      }),
-
       Icons({
         compiler: 'vue3',
         scale: 1,
@@ -78,7 +70,7 @@ export default defineConfig(({ command, mode }) => {
         resolvers: [
           IconsResolver({
             customCollections: [
-              // 'icon',
+              'icon',
             ],
           }),
         ],

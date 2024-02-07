@@ -6,8 +6,6 @@ import router from './router';
 import { createPinia } from 'pinia';
 import { createApp } from 'vue';
 
-import 'virtual:svg-icons-register';
-
 function initApp() {
   const app = createApp(App);
   app.use(createPinia());
