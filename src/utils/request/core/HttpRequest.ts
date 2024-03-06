@@ -121,10 +121,13 @@ export class HttpRequest {
     else {
       // 根据 服务器自定义状态码返回
       // 如果 code!=200 返回自定义错误
-      if (data.code != 200)
-        throw new HttpRequestError(data.msg, data.code); // 在同步代码中抛出错误
-      else
+      if (typeof data === 'object' && (data as ResponseResult)?.code != 200) {
+        const msg = getErrorMessageByStatus((data as ResponseResult)?.code);
+        throw new HttpRequestError((data as ResponseResult).msg || msg, (data as ResponseResult).code);
+      }
+      else {
         return data;
+      }
     }
   }
 
