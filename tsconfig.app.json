@@ -1,20 +1,18 @@
 {
   "extends": "@vue/tsconfig/tsconfig.dom.json",
-  "include": [ "src/**/*", "src/**/*.vue", "types/**/*", "script/**/*"],
+  "include": ["src/**/*", "src/**/*.vue", "types/**/*", "script/**/*"],
   "exclude": ["src/**/__tests__/*"],
   "compilerOptions": {
+    "skipLibCheck": true,
     "composite": true,
     "noEmit": true,
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     },
-    "typeRoots": [
-      "types",
-      "node_modules/@types"
-    ],
     "types": [
-      "unplugin-icons/types/vue"
+      "unplugin-icons/types/vue",
+      "element-plus/global"
     ]
   }
 }

@@ -37,13 +37,8 @@ export default defineConfig(({ command, mode }) => {
               'useRouteQuery',
             ],
           },
-          // {
-          //   from: 'src/hooks/useDicts/types',
-          //   imports: ['DictData'],
-          //   type: true,
-          // },
         ],
-        dts: './types/auto-imports.d.ts',
+        dts: 'src/types/auto-imports.d.ts',
         dirs: [
           'src/hooks',
           'src/store',
@@ -79,7 +74,7 @@ export default defineConfig(({ command, mode }) => {
           }),
         ],
         dirs: ['src/components'],
-        dts: 'types/components.d.ts',
+        dts: 'src/types/components.d.ts',
       }),
       dynamicImportVars({
         include: ['~icons/*'],

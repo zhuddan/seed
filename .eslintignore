@@ -2,9 +2,9 @@ dist
 
 node_modules
 
-types/auto-imports.d.ts
+src/types/auto-imports.d.ts
+src/types/components.d.ts
 
 vite.config.ts.timestamp*
-
 
 components.d.ts

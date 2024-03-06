@@ -156,7 +156,7 @@
       { "multiline": { "delimiter": "semi" } }
     ],
     "@typescript-eslint/type-annotation-spacing": ["error", {}],
-    "@typescript-eslint/consistent-type-imports": ["off"],
+    "@typescript-eslint/consistent-type-imports": ["error"],
     "import/newline-after-import": "error",
     "@typescript-eslint/no-import-type-side-effects": "error",
     "@typescript-eslint/consistent-type-definitions": ["error", "interface"],

@@ -14,7 +14,6 @@ declare const APP_API_URL: string;
  * 静态资源地址
  */
 declare const APP_STATIC_URL: string;
-
 /**
  * 函数
  */

@@ -7,24 +7,15 @@ const icons = [
   d(() => import('~icons/skill-icons/nginx')),
   // 本地svg
   d(async () => h('span', { innerHTML: (await import('~icons/icon/download-count?raw'))['default'] })),
-  d(async () => h('span', { innerHTML: (await import('~icons/icon/dynamic-avatar-1?raw'))['default'] })),
-  d(async () => h('span', { innerHTML: (await import('~icons/icon/dynamic-avatar-2?raw'))['default'] })),
-  d(async () => h('span', { innerHTML: (await import('~icons/icon/dynamic-avatar-3?raw'))['default'] })),
-  d(async () => h('span', { innerHTML: (await import('~icons/icon/dynamic-avatar-4?raw'))['default'] })),
-  d(async () => h('span', { innerHTML: (await import('~icons/icon/dynamic-avatar-5?raw'))['default'] })),
-  d(async () => h('span', { innerHTML: (await import('~icons/icon/dynamic-avatar-6?raw'))['default'] })),
-  d(async () => h('span', { innerHTML: (await import('~icons/icon/ic_right?raw'))['default'] })),
-  d(async () => h('span', { innerHTML: (await import('~icons/icon/moon?raw'))['default'] })),
-  d(async () => h('span', { innerHTML: (await import('~icons/icon/sun?raw'))['default'] })),
-  d(async () => h('span', { innerHTML: (await import('~icons/icon/test?raw'))['default'] })),
-  d(async () => h('span', { innerHTML: (await import('~icons/icon/total-sales?raw'))['default'] })),
-  d(async () => h('span', { innerHTML: (await import('~icons/icon/transaction?raw'))['default'] })),
-  d(async () => h('span', { innerHTML: (await import('~icons/icon/visit-count?raw'))['default'] })),
 ];
 </script>
 
 <template>
   <div class="container">
+    <el-button type="primary">
+      2
+    </el-button>
+    <ElAffix>2</ElAffix>
     <h1>{{ $app_name }}</h1>
     <div class="box">
       <div v-for="(item, index) in icons" :key="index" class="item">
@@ -40,6 +31,7 @@ const icons = [
         <i-icon-logo style="width: 2em;" />
       </div>
     </div>
+    <ElButton></ElButton>
   </div>
 </template>
 
