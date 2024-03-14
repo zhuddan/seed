@@ -1,19 +1,24 @@
 import type { UserInfo } from '@/model/user';
 
 import { request } from '@/utils/request';
+
+interface Data {
+  access_token: string;
+  expires_in: number;
+}
 // 获取验证码
 export function getCodeImg() {
   return request.get<{ img: string; uuid: string }>(
     {
-      url: '/captchaImage',
+      url: '/code',
     },
   );
 }
 
 export function login(username: string, password: string, code: string, uuid: string) {
   // 登录方法
-  return request.post<{ token: string }>({
-    url: '/login',
+  return request.post<ResponseData<Data>>({
+    url: '/auth/login',
     data: {
       username,
       password,
@@ -26,6 +31,6 @@ export function login(username: string, password: string, code: string, uuid: st
 // 获取用户详细信息
 export function getInfo() {
   return request.get<UserInfo>({
-    url: '/getInfo',
+    url: '/system/user/getInfo',
   });
 }

@@ -14,7 +14,7 @@ declare type ResponseList<T> = ResponseResult<{
 /**
  * @description 数据类型 包含在 data 里面
  */
-declare type ResponseData<T = any> = ResponseResult<{
+declare type ResponseData<T> = ResponseResult<{
   data: T;
 }>;
 

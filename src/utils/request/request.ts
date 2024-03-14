@@ -44,25 +44,37 @@ export const request = new HttpRequest<CustomHeaders, NativeResponseHeaders>({
     isReturnNativeResponse: false,
     withToken: true,
   },
+
+  onUploadProgress(progressEvent) {
+    console.log(progressEvent);
+    // 处理原生进度事件
+  },
+
+  // `onDownloadProgress` 允许为下载处理进度事件
+  // 浏览器专属
+  onDownloadProgress(progressEvent) {
+    if (progressEvent.total) {
+      const progress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+      console.log(`Download Progress: ${progress}%`);
+    }
+    // 处理原生进度事件
+  },
+
 },
 {
   request(config) {
+    console.log(config.headers);
     /**
      *  axios 请求 把 headers 上的 true 变成了 'true'
      */
     /**
      * token
      */
-    if (config.headers?.withToken && `${config.headers?.withToken}` === 'true') {
-      const token = getCacheToken();
+    const token = getCacheToken();
+    if (config.headers?.withToken && `${config.headers?.withToken}` === 'true' && token) {
       config.headers![tokenKey] = `${tokenKeyScheme} ${token}`;
     }
-    /**
-     * 添加时间戳到 get 请求
-     */
-    if (config.method?.toUpperCase() == HttpRequestMethodsEnum.GET) {
-      config.params = { _t: `${Date.now()}`, ...config.params };
-    }
+
     /**
      * 忽略重复请求。第一个请求未完成时进行第二个请求，第一个会被被取消
      */
@@ -70,6 +82,13 @@ export const request = new HttpRequest<CustomHeaders, NativeResponseHeaders>({
       const key = generateKey({ ...config });
       const cancelToken = new axios.CancelToken(c => cancelInterceptor(key, c));
       config.cancelToken = cancelToken;
+    }
+
+    /**
+     * 添加时间戳到 get 请求
+     */
+    if (config.method?.toUpperCase() == HttpRequestMethodsEnum.GET) {
+      config.params = { _t: `${Date.now()}`, ...config.params };
     }
 
     return config;
@@ -94,7 +113,7 @@ export const request = new HttpRequest<CustomHeaders, NativeResponseHeaders>({
      * 登录过期
      */
     if (responseData.code === 401) {
-      removeCacheToken();
+      // removeCacheToken();
     }
     const msg = responseData.msg || getSystemErrorMessage(responseData.code);
     console.log('response error', msg);

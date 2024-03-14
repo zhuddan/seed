@@ -7,9 +7,20 @@ export function createPermissionGuard(router: Router) {
     const userStore = useUserStore();
     if (getCacheToken()) {
       if (!userStore.user) {
-        await userStore.getInfo();
+        try {
+          await userStore.getInfo();
+          next();
+        }
+        catch (error) {
+          next();
+        }
+      }
+      else {
+        next();
       }
     }
-    next();
+    else {
+      next();
+    }
   });
 }

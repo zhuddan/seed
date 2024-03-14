@@ -1,5 +1,4 @@
-import type { HttpRequestConfig } from './HttpRequest';
-
+import { ContentTypeEnum, type HttpRequestConfig } from './HttpRequest';
 import { request } from './request';
 
 import { saveAs } from 'file-saver';
@@ -60,9 +59,11 @@ export function download(config: HttpRequestConfig<any>) {
       responseType: 'blob',
       headers: {
         isReturnNativeResponse: true,
+        'Content-Type': ContentTypeEnum.FORM_URLENCODED, // 'application/x-www-form-urlencoded',
       },
     })
     .then(async (res) => {
+      console.log(res);
       const data = res.data as unknown as Blob;
       const filename = config.headers?.filename;
       if (isBlob(res.data)) {

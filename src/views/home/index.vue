@@ -1,6 +1,16 @@
 <script setup lang="ts">
 const d = defineAsyncComponent;
 
+function download2() {
+  download({
+    url: 'https://backend.yuntyu.com/system/user/export',
+    method: 'post',
+    params: {
+      pageNum: 1,
+      pageSize: 10,
+    },
+  });
+}
 const icons = [
   // @iconify/json
   d(() => import('~icons/ic/baseline-plus')),
@@ -12,13 +22,20 @@ const icons = [
 
 <template>
   <div class="container">
-    <el-button type="primary">
-      2
+    <el-button
+      type="primary"
+      @click="download2"
+    >
+      download2
     </el-button>
     <ElAffix>2</ElAffix>
     <h1>{{ $app_name }}</h1>
     <div class="box">
-      <div v-for="(item, index) in icons" :key="index" class="item">
+      <div
+        v-for="(item, index) in icons"
+        :key="index"
+        class="item"
+      >
         <component :is="item" />
       </div>
       <div class="item">
