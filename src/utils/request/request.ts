@@ -104,17 +104,17 @@ export const request = new HttpRequest<CustomHeaders, NativeResponseHeaders>({
   },
 });
 
+export function removeAllPenddingRequest() {
+  for (const [, value] of cancelMap) {
+    value?.('remove all pendding request');
+  }
+}
+
 function cancelInterceptor(key: string, canceler: Canceler) {
   if (cancelMap.has(key)) {
     cancelMap.get(key)?.('cancel repeat request');
   }
   cancelMap.set(key, canceler);
-}
-
-export function removeAllPenddingRequest() {
-  for (const [, value] of cancelMap) {
-    value?.('remove all pendding request');
-  }
 }
 
 function generateKey(config: AxiosRequestConfig) {
