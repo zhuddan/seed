@@ -5,9 +5,12 @@ function download2() {
   download({
     url: 'https://backend.yuntyu.com/system/user/export',
     method: 'post',
+    headers: {
+      // withToken: false,
+    },
     params: {
       pageNum: 1,
-      pageSize: 10,
+      pageSize: 100,
     },
   });
 }

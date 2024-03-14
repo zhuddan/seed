@@ -178,8 +178,7 @@ export class HttpRequest<T extends object, U extends T> {
   request<D extends object>(config: HttpRequestConfig<T> & { headers: U }): Promise<AxiosResponse<ResponseResult<D>>>;
   request<D extends object>(config: HttpRequestConfig<T>): Promise<ResponseResult<D>>;
   request<D extends object>(config: HttpRequestConfig<T>): Promise<AxiosResponse<D> | ResponseResult<D>> {
-    const _config = merge(this.baseConfig, this.formatFormData(config));
-
+    const _config = merge({}, this.baseConfig, this.formatFormData(config));
     return this.axiosInstance.request(_config);
   }
 }

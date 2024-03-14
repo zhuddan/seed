@@ -1,7 +1,7 @@
-import { ContentTypeEnum, type HttpRequestConfig } from './HttpRequest';
+import { ContentTypeEnum } from './HttpRequest';
 import { request } from './request';
 
-import { saveAs } from 'file-saver';
+import { merge } from 'lodash-es';
 
 function transformRequest(params?: object) {
   if (!isObject(params)) return '';
@@ -27,63 +27,18 @@ function transformRequest(params?: object) {
   return result;
 }
 
-function isBlob(data: any): data is Blob {
-  return data instanceof Blob;
-}
-
-export function download(config: HttpRequestConfig<any>) {
-  function getHeaderFileName(headers: Record<string, any>) {
-    const headersFileNameKey = [
-      'file-name',
-      'download-filename',
-      'File-Name',
-      'FileName',
-      'Filename',
-    ];
-    headersFileNameKey.forEach((key) => {
-      if (Object.prototype.hasOwnProperty.call(headers, key)) {
-        if (headers[key])
-          return `${headers[key]}`;
-      }
-    });
-    return '';
-  }
-  return request
-    .request({
-      ...config,
-      transformRequest: [
-        (params) => {
-          return transformRequest(params);
-        },
-      ],
-      responseType: 'blob',
-      headers: {
-        isReturnNativeResponse: true,
-        'Content-Type': ContentTypeEnum.FORM_URLENCODED, // 'application/x-www-form-urlencoded',
+export function download(config: Parameters<typeof request.request>[0]) {
+  const c = merge(config, {
+    transformRequest: [
+      (params: object) => {
+        return transformRequest(params);
       },
-    })
-    .then(async (res) => {
-      console.log(res);
-      const data = res.data as unknown as Blob;
-      const filename = config.headers?.filename;
-      if (isBlob(res.data)) {
-        if (res.data?.type && !filename) {
-          saveAs(res.data as unknown as Blob);
-        }
-        else {
-          const urlList = config.url?.split('/');
-          const extList = config.url?.split('.');
-          const urlFileName = urlList && urlList?.length >= 0 ? urlList[urlList?.length - 1] : '';
-          const ext = extList && extList?.length >= 0 ? extList[extList?.length - 1] : '';
-          const _filename = filename || getHeaderFileName(config.headers || {}) || urlFileName || `${Date.now()}.${ext}`;
-          saveAs(res.data, decodeURI(decodeURI(_filename)));
-        }
-      }
-      else {
-        const resText = await data.text();
-        const rspObj = JSON.parse(resText);
-        const e = new Error(rspObj.msg, rspObj.code || 500); // 在同步代码中抛出错误
-        throw e;
-      }
-    });
+    ],
+    responseType: 'blob',
+    headers: {
+      isReturnNativeResponse: true as const,
+      'Content-Type': ContentTypeEnum.FORM_URLENCODED,
+    },
+  });
+  return request.request({ ...c });
 }

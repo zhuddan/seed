@@ -3,6 +3,7 @@ import type { AxiosRequestConfig, Canceler } from 'axios';
 import { ContentTypeEnum, HttpRequest, type HttpRequestConfig, HttpRequestMethodsEnum } from './HttpRequest';
 
 import axios, { AxiosError } from 'axios';
+import { saveAs } from 'file-saver';
 
 interface CustomHeaders {
   /**
@@ -35,9 +36,19 @@ const tokenKey = 'Authorization';
 const tokenKeyScheme = 'Bearer';
 const cancelMap = new Map<string, Canceler>();
 
+function getHeaderFileName(headers: Record<string, any>) {
+  ['file-name', 'download-filename', 'File-Name', 'FileName', 'Filename'].forEach((key) => {
+    if (Object.prototype.hasOwnProperty.call(headers, key)) {
+      if (headers[key])
+        return `${headers[key]}`;
+    }
+  });
+  return '';
+}
+
 export const request = new HttpRequest<CustomHeaders, NativeResponseHeaders>({
   baseURL: APP_API_URL,
-  timeout: 2000,
+  timeout: 15 * 1000,
   headers: {
     'Content-Type': ContentTypeEnum.JSON,
     ignoreRepeatRequest: false,
@@ -53,6 +64,7 @@ export const request = new HttpRequest<CustomHeaders, NativeResponseHeaders>({
   // `onDownloadProgress` 允许为下载处理进度事件
   // 浏览器专属
   onDownloadProgress(progressEvent) {
+    console.log(progressEvent);
     if (progressEvent.total) {
       const progress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
       console.log(`Download Progress: ${progress}%`);
@@ -63,7 +75,6 @@ export const request = new HttpRequest<CustomHeaders, NativeResponseHeaders>({
 },
 {
   request(config) {
-    console.log(config.headers);
     /**
      *  axios 请求 把 headers 上的 true 变成了 'true'
      */
@@ -94,14 +105,37 @@ export const request = new HttpRequest<CustomHeaders, NativeResponseHeaders>({
     return config;
   },
 
-  requestError() {
-
+  requestError(e) {
+    console.log(e);
   },
-  response(_response) {
+  async response(_response) {
     cancelMap.delete(generateKey(_response.config));
-
     const config = _response.config as HttpRequestConfig<CustomHeaders>;
     if (config.headers?.isReturnNativeResponse) {
+      // 处理下载文件
+      if (_response.config.responseType === 'blob') {
+        const blob = _response.data as unknown as Blob;
+        const filename = config.headers?.filename;
+        if (_response.data && blob.type != 'application/json') {
+          if (_response.data?.type && !filename) {
+            saveAs(_response.data as unknown as Blob);
+          }
+          else {
+            const urlList = config.url?.split('/');
+            const extList = config.url?.split('.');
+            const urlFileName = urlList && urlList?.length >= 0 ? urlList[urlList?.length - 1] : '';
+            const ext = extList && extList?.length >= 0 ? extList[extList?.length - 1] : '';
+            const _filename = filename || getHeaderFileName(config.headers || {}) || urlFileName || `${Date.now()}.${ext}`;
+            saveAs(_response.data, decodeURI(decodeURI(_filename)));
+          }
+        }
+        else {
+          const resText = await blob.text();
+          const rspObj = JSON.parse(resText);
+          handleError(rspObj.msg || getSystemErrorMessage(rspObj.code));
+        }
+      }
+
       return _response;
     }
     const responseData = _response.data as ResponseResult<object>;
@@ -116,19 +150,17 @@ export const request = new HttpRequest<CustomHeaders, NativeResponseHeaders>({
       // removeCacheToken();
     }
     const msg = responseData.msg || getSystemErrorMessage(responseData.code);
-    console.log('response error', msg);
-    throw new Error(msg);
+
+    handleError(msg);
   },
   responseError(error) {
     if (error.config)
       cancelMap.delete(generateKey(error.config));
 
     if (error instanceof AxiosError) {
-      const m = getAxiosErrorErrorMessage(error.code);
-      console.log('🤖 request 错误', m);
-      throw new Error(m);
+      handleError(getAxiosErrorErrorMessage(error.code));
     }
-    console.log('🤖 request 错误2', error);
+
     throw error;
   },
 });
@@ -209,4 +241,8 @@ function getSystemErrorMessage(status: number) {
     default:
       return '未知错误';
   }
+}
+
+function handleError(msg: string) {
+  throw new Error(msg);
 }
