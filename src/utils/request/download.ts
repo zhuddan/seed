@@ -1,13 +1,8 @@
-import type { HttpRequestOption } from './core';
+import type { HttpRequestConfig } from './HttpRequest';
 
-import { HttpRequestError } from './core';
 import { request } from './request';
 
 import { saveAs } from 'file-saver';
-
-interface DownloadOptions extends HttpRequestOption {
-  filename?: string;
-}
 
 function transformRequest(params?: object) {
   if (!isObject(params)) return '';
@@ -37,7 +32,7 @@ function isBlob(data: any): data is Blob {
   return data instanceof Blob;
 }
 
-export function download(config: DownloadOptions) {
+export function download(config: HttpRequestConfig<any>) {
   function getHeaderFileName(headers: Record<string, any>) {
     const headersFileNameKey = [
       'file-name',
@@ -67,10 +62,11 @@ export function download(config: DownloadOptions) {
         isReturnNativeResponse: true,
       },
     })
-    .then(async (res: any) => {
-      const data = res.data;
+    .then(async (res) => {
+      const data = res.data as unknown as Blob;
+      const filename = config.headers?.filename;
       if (isBlob(res.data)) {
-        if (res.data?.type && !config.filename) {
+        if (res.data?.type && !filename) {
           saveAs(res.data as unknown as Blob);
         }
         else {
@@ -78,14 +74,14 @@ export function download(config: DownloadOptions) {
           const extList = config.url?.split('.');
           const urlFileName = urlList && urlList?.length >= 0 ? urlList[urlList?.length - 1] : '';
           const ext = extList && extList?.length >= 0 ? extList[extList?.length - 1] : '';
-          const filename = config.filename || getHeaderFileName(config.headers || {}) || urlFileName || `${Date.now()}.${ext}`;
-          saveAs(res.data, decodeURI(decodeURI(filename)));
+          const _filename = filename || getHeaderFileName(config.headers || {}) || urlFileName || `${Date.now()}.${ext}`;
+          saveAs(res.data, decodeURI(decodeURI(_filename)));
         }
       }
       else {
         const resText = await data.text();
         const rspObj = JSON.parse(resText);
-        const e = new HttpRequestError(rspObj.msg, rspObj.code || 500); // 在同步代码中抛出错误
+        const e = new Error(rspObj.msg, rspObj.code || 500); // 在同步代码中抛出错误
         throw e;
       }
     });

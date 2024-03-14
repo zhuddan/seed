@@ -22,6 +22,10 @@ interface CustomHeaders {
    * get 请求加时间戳
    */
   withTimestamp?: boolean;
+  /**
+   * 下载文件名称
+   */
+  filename?: string;
 };
 interface NativeResponseHeaders {
   isReturnNativeResponse: true;
