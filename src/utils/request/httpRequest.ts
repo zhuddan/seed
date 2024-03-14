@@ -80,8 +80,7 @@ export class HttpRequest<T extends object, U extends T> {
     } = interceptors || {};
 
     this.axiosInstance.interceptors.request.use(async (config) => {
-      const _config = merge(this.baseConfig, config);
-      const value = await (request?.(_config) || _config) ;
+      const value = await (request?.(config as HttpRequestConfig<T>) || config) ;
       return value as InternalAxiosRequestConfig;
     }, requestError);
 
@@ -180,6 +179,7 @@ export class HttpRequest<T extends object, U extends T> {
   request<D extends object>(config: HttpRequestConfig<T>): Promise<ResponseResult<D>>;
   request<D extends object>(config: HttpRequestConfig<T>): Promise<AxiosResponse<D> | ResponseResult<D>> {
     const _config = merge(this.baseConfig, this.formatFormData(config));
+
     return this.axiosInstance.request(_config);
   }
 }

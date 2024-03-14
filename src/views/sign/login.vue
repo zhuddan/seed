@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getCodeImg, getInfo } from '@/api/login';
+import { getCodeImg } from '@/api/login';
 
 const router = useRouter();
 const username = ref('admin');
@@ -40,11 +40,8 @@ function handleLogin() {
 }
 function getCode() {
   getCodeImg().then((res) => {
-    console.log(res);
-  });
-
-  getInfo().then((e) => {
-    console.log(e);
+    codeUrl.value = `data:image/gif;base64,${res.img}`;
+    uuid.value = res.uuid;
   });
 }
 getCode();

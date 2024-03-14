@@ -40,19 +40,22 @@ export const request = new HttpRequest<CustomHeaders, NativeResponseHeaders>({
   timeout: 2000,
   headers: {
     'Content-Type': ContentTypeEnum.JSON,
-    withToken: false,
-    ignoreRepeatRequest: true,
+    ignoreRepeatRequest: false,
     isReturnNativeResponse: false,
+    withToken: true,
   },
 },
 {
   request(config) {
     /**
+     *  axios 请求 把 headers 上的 true 变成了 'true'
+     */
+    /**
      * token
      */
-    if (config.headers?.withToken === true) {
+    if (config.headers?.withToken && `${config.headers?.withToken}` === 'true') {
       const token = getCacheToken();
-      config.headers[tokenKey] = `${tokenKeyScheme} ${token}`;
+      config.headers![tokenKey] = `${tokenKeyScheme} ${token}`;
     }
     /**
      * 添加时间戳到 get 请求
@@ -63,11 +66,12 @@ export const request = new HttpRequest<CustomHeaders, NativeResponseHeaders>({
     /**
      * 忽略重复请求。第一个请求未完成时进行第二个请求，第一个会被被取消
      */
-    if (config.headers?.ignoreRepeatRequest) {
+    if (config.headers?.ignoreRepeatRequest && `${config.headers?.ignoreRepeatRequest}` === 'true') {
       const key = generateKey({ ...config });
       const cancelToken = new axios.CancelToken(c => cancelInterceptor(key, c));
       config.cancelToken = cancelToken;
     }
+
     return config;
   },
 
@@ -83,13 +87,18 @@ export const request = new HttpRequest<CustomHeaders, NativeResponseHeaders>({
     }
     const responseData = _response.data as ResponseResult<object>;
 
-    if (responseData.code === 200)
+    if (responseData.code === 200) {
       return responseData as any;
-    const e = new Error(getSystemErrorMessage(responseData.code));
-    console.log(e);
-    console.log(config.url);
-
-    throw e;
+    }
+    /**
+     * 登录过期
+     */
+    if (responseData.code === 401) {
+      removeCacheToken();
+    }
+    const msg = responseData.msg || getSystemErrorMessage(responseData.code);
+    console.log('response error', msg);
+    throw new Error(msg);
   },
   responseError(error) {
     if (error.config)
@@ -100,6 +109,7 @@ export const request = new HttpRequest<CustomHeaders, NativeResponseHeaders>({
       console.log('🤖 request 错误', m);
       throw new Error(m);
     }
+    console.log('🤖 request 错误2', error);
     throw error;
   },
 });
