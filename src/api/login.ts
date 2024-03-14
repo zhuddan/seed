@@ -20,9 +20,6 @@ export function login(username: string, password: string, code: string, uuid: st
       code,
       uuid,
     },
-    headers: {
-      isReturnNativeResponse: true,
-    },
   });
 }
 

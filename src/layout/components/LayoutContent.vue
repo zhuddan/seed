@@ -17,7 +17,10 @@ router.afterEach((a) => {
 
 <template>
   <div class="content-wrapper">
-    <main id="content" :class="{ layout }">
+    <main
+      id="content"
+      :class="{ layout }"
+    >
       <router-view />
     </main>
     <BackTop />

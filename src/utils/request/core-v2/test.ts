@@ -1,6 +1,6 @@
-import { HttpRequestV2 } from '.';
+import { HttpRequest } from '../HttpRequest';
 
-const h = new HttpRequestV2<{
+const h = new HttpRequest<{
   /**
    * @description 是否需要token
    */

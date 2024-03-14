@@ -1,173 +1,185 @@
-import type { AxiosRequestConfig, Canceler } from 'axios';
+import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 
-import { type HttpRequestConfig, HttpRequestHeadersContentTypeEnum, HttpRequestMethodsEnum, HttpRequestV2 } from './core-v2';
+import axios from 'axios';
+import { merge } from 'lodash-es';
+import Qs from 'qs';
 
-import axios, { AxiosError } from 'axios';
+/**
+ * @description 请求方法
+ */
+export enum HttpRequestMethodsEnum {
+  GET = 'GET',
+  POST = 'POST',
+  PUT = 'PUT',
+  DELETE = 'DELETE',
+}
 
-interface CustomHeaders {
+/**
+ * @description headers ContentType
+ */
+export enum ContentTypeEnum {
+  // json
+  JSON = 'application/json;charset=UTF-8',
+  // form-data qs
+  FORM_URLENCODED = 'application/x-www-form-urlencoded;charset=UTF-8',
+  // form-data  upload
+  FORM_DATA = 'multipart/form-data;charset=UTF-8',
+}
+
+/**
+ * 拦截器
+ */
+export interface HttpRequestInterceptors<T extends object> {
+  request?: (value: HttpRequestConfig<T>) => HttpRequestConfig<T> | Promise<HttpRequestConfig<T>>;
+  requestError?: (error: any) => (Promise<any> | any);
+  response?: ((value: AxiosResponse<any, any>) => AxiosResponse<any, any> | Promise<AxiosResponse<any, any>>) | null | undefined;
+  responseError?: (error: any) => (Promise<any> | any);
+}
+/**
+ * HttpRequestConfig 配置
+ */
+export interface HttpRequestConfig<T extends object> extends AxiosRequestConfig {
+  headers?: AxiosRequestConfig['headers'] & Partial<T>;
+}
+
+/**
+ * HttpRequestConfig 配置( 去除 method 为了给具体请求函数使用 get / post ...)
+ */
+export type HttpRequestConfigWithoutMethod<T extends object> = Omit<HttpRequestConfig<T>, 'method'>;
+
+/**
+ * 实现
+ */
+export class HttpRequest<T extends object, U extends T> {
   /**
-   * @description 是否需要token
+   * @description axios 实例
    */
-  withToken?: boolean;
+  private axiosInstance: AxiosInstance;
   /**
-  * @description 返回原生响应 AxiosResponse<T> 默认false
-  */
-  isReturnNativeResponse?: boolean;
-  /**
-  * @description 忽略重复请求。第一个请求未完成时进行第二个请求，第一个会被被取消
-  *              参考 axios 取消请求 https://axios-http.com/zh/docs/cancellation
-  */
-  ignoreRepeatRequest?: boolean;
-  /**
-   * get 请求加时间戳
+   * @description 基础配置
    */
-  withTimestamp?: boolean;
-};
-interface NativeResponseHeaders {
-  isReturnNativeResponse: true;
-};
+  private baseConfig: HttpRequestConfig<T>;
 
-const tokenKey = 'Authorization';
-const tokenKeyScheme = 'Bearer';
-const cancelMap = new Map<string, Canceler>();
+  /**
+   *
+   * @param options 基础配置
+   * @param interceptors 拦截器
+   */
+  constructor(options: HttpRequestConfig<T>, interceptors?: HttpRequestInterceptors<T>) {
+    this.baseConfig = {
+      ...options,
+    };
 
-export const request = new HttpRequestV2<CustomHeaders, NativeResponseHeaders>({
-  baseURL: APP_API_URL,
-  timeout: 2000,
-  headers: {
-    'Content-Type': HttpRequestHeadersContentTypeEnum.JSON,
-    withToken: false,
-    ignoreRepeatRequest: true,
-    isReturnNativeResponse: false,
-  },
-},
-{
-  request(config) {
-    /**
-     * token
-     */
-    if (config.headers?.withToken === true) {
-      const token = getCacheToken();
-      config.headers[tokenKey] = `${tokenKeyScheme} ${token}`;
-    }
-    /**
-     * 添加时间戳到 get 请求
-     */
-    if (config.method?.toUpperCase() == HttpRequestMethodsEnum.GET) {
-      config.params = { _t: `${Date.now()}`, ...config.params };
-    }
-    /**
-     * 忽略重复请求。第一个请求未完成时进行第二个请求，第一个会被被取消
-     */
-    if (config.headers?.ignoreRepeatRequest) {
-      const key = generateKey({ ...config });
-      const cancelToken = new axios.CancelToken(c => cancelInterceptor(key, c));
-      config.cancelToken = cancelToken;
-    }
-    return config;
-  },
+    this.axiosInstance = axios.create(this.baseConfig);
 
-  requestError() {
+    const {
+      request,
+      response,
+      requestError,
+      responseError,
+    } = interceptors || {};
 
-  },
-  response(_response) {
-    cancelMap.delete(generateKey(_response.config));
+    this.axiosInstance.interceptors.request.use(async (config) => {
+      const _config = merge(this.baseConfig, config);
+      const value = await (request?.(_config) || _config) ;
+      return value as InternalAxiosRequestConfig;
+    }, requestError);
 
-    const config = _response.config as HttpRequestConfig<CustomHeaders>;
-    if (config.headers?.isReturnNativeResponse) {
-      return _response;
-    }
-    const responseData = _response.data as ResponseResult<object>;
-
-    if (responseData.code === 200)
-      return responseData as any;
-    const e = new Error(getSystemErrorMessage(responseData.code));
-    console.log(e);
-    console.log(config.url);
-
-    throw e;
-  },
-  responseError(error) {
-    if (error.config)
-      cancelMap.delete(generateKey(error.config));
-
-    if (error instanceof AxiosError) {
-      const m = getAxiosErrorErrorMessage(error.code);
-      console.log('🤖 request 错误', m);
-      throw new Error(m);
-    }
-    throw error;
-  },
-});
-
-function cancelInterceptor(key: string, canceler: Canceler) {
-  if (cancelMap.has(key)) {
-    cancelMap.get(key)?.('cancel repeat request');
+    this.axiosInstance.interceptors.response.use((data) => {
+      return (response?.(data) || data);
+    }, (error) => {
+      return responseError?.(error) || Promise.reject(error);
+    });
   }
-  cancelMap.set(key, canceler);
-}
 
-function generateKey(config: AxiosRequestConfig) {
-  const { url, method, params = {}, data = {} } = config;
-  return `${url}-${method}-${JSON.stringify(method === 'get' ? params : data)}`;
-}
+  // 文件上传
+  uploadFile<T extends AnyObject = AnyObject>(config: AxiosRequestConfig, params: Record<string, any>) {
+    const formData = new window.FormData();
+    const customFilename = params.name || 'file';
 
-function getAxiosErrorErrorMessage(code?: string): string {
-  switch (code) {
-    case 'ERR_BAD_OPTION_VALUE':
-      return '选项设置了错误的值';
-    case 'ERR_BAD_OPTION':
-      return '无效的或不支持的选项';
-    case 'ECONNABORTED':
-      return '网络连接被中断，通常因为请求超时';
-    case 'ETIMEDOUT':
-      return '操作超时';
-    case 'ERR_NETWORK':
-      return '网络错误';
-    case 'ERR_FR_TOO_MANY_REDIRECTS':
-      return '请求被重定向了太多次，可能导致无限循环';
-    case 'ERR_DEPRECATED':
-      return '使用了已被废弃的函数或方法';
-    case 'ERR_BAD_RESPONSE':
-      return '从服务器接收到无效或错误的响应';
-    case 'ERR_BAD_REQUEST':
-      return '发送的请求格式错误或无效';
-    case 'ERR_CANCELED':
-      return '请求已经被取消';
-    case 'ERR_NOT_SUPPORT':
-      return '使用的某个功能或方法不被支持';
-    case 'ERR_INVALID_URL':
-      return '提供的URL无效';
-    default:
-      return '未知错误';
+    if (params.filename) {
+      formData.append(customFilename, params.file, params.filename);
+    }
+    else {
+      formData.append(customFilename, params.file);
+    }
+
+    if (params.data) {
+      Object.keys(params.data).forEach((key) => {
+        const value = params.data![key];
+        if (Array.isArray(value)) {
+          value.forEach((item) => {
+            formData.append(`${key}[]`, item);
+          });
+          return;
+        }
+        formData.append(key, params.data![key]);
+      });
+    }
+
+    return this.axiosInstance.request<T>({
+      ...config,
+      method: 'POST',
+      data: formData,
+      headers: {
+        'Content-type': ContentTypeEnum.FORM_DATA,
+      },
+    });
   }
-}
 
-function getSystemErrorMessage(status: number) {
-  switch (status) {
-    case 400:
-      return '错误请求，服务器无法理解请求的格式';
-    case 401:
-      return '无效的会话，或者会话已过期，请重新登录。';
-    case 403:
-      return '当前操作没有权限';
-    case 404:
-      return '服务器无法根据客户端的请求找到资源';
-    case 405:
-      return '网络请求错误,请求方法未允许!';
-    case 408:
-      return '网络请求超时!';
-    case 500:
-      return '服务器内部错误，无法完成请求';
-    case 502:
-      return '网关错误';
-    case 503:
-      return '服务器目前无法使用（由于超载或停机维护）';
-    case 504:
-      return '网络超时!';
-    case 505:
-      return 'http版本不支持该请求!';
-    default:
-      return '未知错误';
+  /**
+   * 格式化 formdata
+   * @param config
+   * @returns
+   */
+  formatFormData(config: AxiosRequestConfig) {
+    const headers = config.headers || this.baseConfig.headers;
+    const contentType = headers?.['Content-Type'] || headers?.['content-type'];
+    if (
+      contentType !== ContentTypeEnum.FORM_URLENCODED
+      || config.data && typeof config.data == 'object' && Object.keys(config.data.length)
+      || config.method?.toUpperCase() === HttpRequestMethodsEnum.GET
+    ) {
+      return config as HttpRequestConfig<T>;
+    }
+    return {
+      ...config,
+      data: Qs.stringify(config.data, { arrayFormat: 'brackets' }),
+    } as HttpRequestConfig<T>;
+  }
+
+  /**
+   * get 请求
+   * @param config
+   */
+  get<D extends object>(config: HttpRequestConfigWithoutMethod<T> & { headers: U }): Promise<AxiosResponse<ResponseResult<D>>>;
+  get<D extends object>(config: HttpRequestConfigWithoutMethod<T>): Promise<ResponseResult<D>>;
+  get<D extends object>(config: HttpRequestConfigWithoutMethod<T>): Promise<AxiosResponse<D> | ResponseResult<D>> {
+    return this.request({ ...config, method: 'get' });
+  }
+
+  post<D extends object>(config: HttpRequestConfigWithoutMethod<T> & { headers: U }): Promise<AxiosResponse<ResponseResult<D>>>;
+  post<D extends object>(config: HttpRequestConfigWithoutMethod<T>): Promise<ResponseResult<D>>;
+  post<D extends object>(config: HttpRequestConfigWithoutMethod<T>): Promise<AxiosResponse<D> | ResponseResult<D>> {
+    return this.request({ ...config, method: 'post' });
+  }
+
+  put<D extends object>(config: HttpRequestConfigWithoutMethod<T> & { headers: U }): Promise<AxiosResponse<ResponseResult<D>>>;
+  put<D extends object>(config: HttpRequestConfigWithoutMethod<T>): Promise<ResponseResult<D>>;
+  put<D extends object>(config: HttpRequestConfigWithoutMethod<T>): Promise<AxiosResponse<D> | ResponseResult<D>> {
+    return this.request({ ...config, method: 'put' });
+  }
+
+  delete<D extends object>(config: HttpRequestConfigWithoutMethod<T> & { headers: U }): Promise<AxiosResponse<ResponseResult<D>>>;
+  delete<D extends object>(config: HttpRequestConfigWithoutMethod<T>): Promise<ResponseResult<D>>;
+  delete<D extends object>(config: HttpRequestConfigWithoutMethod<T>): Promise<AxiosResponse<D> | ResponseResult<D>> {
+    return this.request({ ...config, method: 'delete' });
+  }
+
+  request<D extends object>(config: HttpRequestConfig<T> & { headers: U }): Promise<AxiosResponse<ResponseResult<D>>>;
+  request<D extends object>(config: HttpRequestConfig<T>): Promise<ResponseResult<D>>;
+  request<D extends object>(config: HttpRequestConfig<T>): Promise<AxiosResponse<D> | ResponseResult<D>> {
+    const _config = merge(this.baseConfig, this.formatFormData(config));
+    return this.axiosInstance.request(_config);
   }
 }

@@ -1,7 +1,7 @@
 import type { HttpRequestOption } from './core';
 
 import { HttpRequestError } from './core';
-import { request } from './httpRequest';
+import { request } from './request';
 
 import { saveAs } from 'file-saver';
 
@@ -63,9 +63,11 @@ export function download(config: DownloadOptions) {
         },
       ],
       responseType: 'blob',
-      isReturnNativeResponse: true,
+      headers: {
+        isReturnNativeResponse: true,
+      },
     })
-    .then(async (res) => {
+    .then(async (res: any) => {
       const data = res.data;
       if (isBlob(res.data)) {
         if (res.data?.type && !config.filename) {
@@ -86,7 +88,5 @@ export function download(config: DownloadOptions) {
         const e = new HttpRequestError(rspObj.msg, rspObj.code || 500); // 在同步代码中抛出错误
         throw e;
       }
-    }).catch((e) => {
-      request.requestCallbacks?.onError?.(e.message);
     });
 }
