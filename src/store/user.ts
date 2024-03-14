@@ -12,7 +12,9 @@ export const useUserStore = defineStore('user', () => {
 
   async function login(username: string, password: string, code: string, uuid: string) {
     const res = await _login(username, password, code, uuid);
-    setCacheToken(res.token);
+    res.data.code;
+    res.code;
+    // setCacheToken(res.token);
   }
   function logout() {
     return new Promise<''>((resolve) => {

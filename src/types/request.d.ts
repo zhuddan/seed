@@ -1,11 +1,7 @@
 /**
  * @description 基础数据类型
  */
-declare type ResponseResult<T extends AnyObject = AnyObject> = {
-  code: number;
-  msg: string;
-} & T;
-
+declare type ResponseResult<T extends object> = { code: number; msg: string } & T;
 /**
  * @description 列表数据 ruoyi 返回的是 rows 和 total 如果是其他格式请自定义
  *              注意！ rows 已经 是个 T[] 类型！

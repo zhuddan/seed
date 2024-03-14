@@ -7,9 +7,9 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
-    AppLogo: typeof import('./../src/components/AppLogo/AppLogo.vue')['default']
-    BackTop: typeof import('./../src/components/BackTop/BackTop.vue')['default']
-    BlankView: typeof import('./../src/components/BlankView/BlankView.vue')['default']
+    AppLogo: typeof import('./../components/AppLogo/AppLogo.vue')['default']
+    BackTop: typeof import('./../components/BackTop/BackTop.vue')['default']
+    BlankView: typeof import('./../components/BlankView/BlankView.vue')['default']
     IIconLogo: typeof import('~icons/icon/logo')['default']
     ITwemojiFlagAruba: typeof import('~icons/twemoji/flag-aruba')['default']
     ITwemojiFlagChina: typeof import('~icons/twemoji/flag-china')['default']
