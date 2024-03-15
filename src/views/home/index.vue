@@ -24,7 +24,7 @@ const icons = [
       >
         <component :is="item" />
       </div>
-      <div class="item">
+      <!-- <div class="item">
         <i-twemoji-flag-china />
       </div>
       <div class="item">
@@ -32,7 +32,7 @@ const icons = [
       </div>
       <div class="item">
         <i-icon-logo style="width: 2em;" />
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
