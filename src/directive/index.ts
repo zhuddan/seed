@@ -15,6 +15,7 @@ export const say: VSay = {
   // 或事件监听器应用前调用
   created(_el, _binding, _vnode, _prevVnode) {
     console.log(_el);
+    console.log('Im v-say directive');
     // 下面会介绍各个参数的细节
   },
   // 在元素被插入到 DOM 前调用
