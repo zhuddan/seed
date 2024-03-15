@@ -145,7 +145,7 @@ export const request = new HttpRequest<CustomHeaders, NativeResponseHeaders>({
      * 登录过期
      */
     if (responseData.code === 401) {
-      // removeCacheToken();
+      removeCacheToken();
     }
     const msg = responseData.msg || getSystemErrorMessage(responseData.code);
 
@@ -182,7 +182,18 @@ function generateKey(config: AxiosRequestConfig) {
   return `${url}-${method}-${JSON.stringify(method === 'get' ? params : data)}`;
 }
 
-function handleError(msg: string) {
+async function handleError(msg: string) {
+  const toastify = (await import('toastify-js'))['default'];
+  await import('toastify-js/src/toastify.css');
+  toastify({
+    text: msg,
+    position: 'center',
+    avatar: '/error.png',
+    className: 'error',
+    style: {
+      background: 'linear-gradient(to right, red, #ce3434)',
+    },
+  }).showToast();
   throw new Error(msg);
 }
 

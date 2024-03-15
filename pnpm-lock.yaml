@@ -29,6 +29,9 @@ dependencies:
   qs:
     specifier: ^6.12.0
     version: 6.12.0
+  toastify-js:
+    specifier: ^1.12.0
+    version: 1.12.0
   vue:
     specifier: ^3.4.21
     version: 3.4.21(typescript@5.3.3)
@@ -73,6 +76,9 @@ devDependencies:
   '@types/ssh2-sftp-client':
     specifier: ^9.0.3
     version: 9.0.3
+  '@types/toastify-js':
+    specifier: ^1.12.3
+    version: 1.12.3
   '@types/yargs':
     specifier: ^17.0.32
     version: 17.0.32
@@ -1485,6 +1491,10 @@ packages:
     resolution: {integrity: sha512-YcT8jP5F8NzWeevWvcyrrLB3zcneVjzYY9ZDSMAMboI+2zR1qYWFhwsyOFVzT7Jorn67vqxC0FRiw8YyG9P1ww==}
     dependencies:
       '@types/node': 18.19.24
+    dev: true
+
+  /@types/toastify-js@1.12.3:
+    resolution: {integrity: sha512-9RjLlbAHMSaae/KZNHGv19VG4gcLIm3YjvacCXBtfMfYn26h76YP5oxXI8k26q4iKXCB9LNfv18lsoS0JnFPTg==}
     dev: true
 
   /@types/tough-cookie@4.0.5:
@@ -4801,6 +4811,10 @@ packages:
     dependencies:
       is-number: 7.0.0
     dev: true
+
+  /toastify-js@1.12.0:
+    resolution: {integrity: sha512-HeMHCO9yLPvP9k0apGSdPUWrUbLnxUKNFzgUoZp1PHCLploIX/4DSQ7V8H25ef+h4iO9n0he7ImfcndnN6nDrQ==}
+    dev: false
 
   /totalist@3.0.1:
     resolution: {integrity: sha512-sf4i37nQ2LBx4m3wB74y+ubopq6W/dIzXg0FDGjsYnZHVa1Da8FH853wlL2gtUhg+xJXjfk3kUZS3BRoQeoQBQ==}
