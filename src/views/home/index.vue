@@ -11,7 +11,10 @@ const icons = [
 </script>
 
 <template>
-  <div class="container">
+  <div
+    v-say="2"
+    class="container"
+  >
     <h1>{{ APP_TITLE }}</h1>
     <div class="box">
       <div
