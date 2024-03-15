@@ -1,6 +1,4 @@
-// import { promises as fs } from 'node:fs';
 import { URL, fileURLToPath } from 'node:url';
-// import { generatedIconType } from './script/generatedIconType';
 
 import dynamicImportVars from '@rollup/plugin-dynamic-import-vars';
 import vue from '@vitejs/plugin-vue';
@@ -64,9 +62,6 @@ export default defineConfig(({ command, mode }) => {
         customCollections: {
           icon: FileSystemIconLoader('src/assets/icons/'),
         },
-        // transform(svg) {
-        //   return svg.replace(/^<svg /, '<svg fill="currentColor" ');
-        // },
       }),
       Components({
         resolvers: [
@@ -103,12 +98,8 @@ export default defineConfig(({ command, mode }) => {
      */
     test: {
       environment: 'jsdom',
-      exclude: [...configDefaults.exclude, 'e2e/*'],
+      exclude: [...configDefaults.exclude],
       root: fileURLToPath(new URL('./', import.meta.url)),
-      // browser: {
-      //   enabled: true,
-      //   name: 'chrome', // browser name is required
-      // },
     },
   };
 });
