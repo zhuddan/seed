@@ -34,13 +34,23 @@ async function handleLogout() {
         <router-link to="/about">
           about
         </router-link>
-        <router-link v-if="!userStore.user" to="/login">
+        <router-link
+          v-if="!userStore.user"
+          to="/login"
+        >
           login
         </router-link>
       </nav>
-      <div v-if="userStore.user" class="user-info flex items-center" style="margin-left: 20px;">
+      <div
+        v-if="userStore.user"
+        class="user-info flex items-center"
+        style="margin-left: 20px;"
+      >
         <span>{{ userStore.user?.userName?.toLocaleUpperCase() }}</span>
-        <button class="btn-primary" @click="handleLogout">
+        <button
+          class="btn-primary"
+          @click="handleLogout"
+        >
           退出登录
         </button>
       </div>

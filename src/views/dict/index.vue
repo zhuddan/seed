@@ -5,12 +5,12 @@ const value = ref('DEFAULT');
 const b = ref('');
 
 const { formatDictSync, formatDictComputed } = useDicts(
-  ['sys_job_group'],
+  ['sys_yes_or_no'],
   {},
   () => {
-    b.value = formatDictSync('sys_job_group', 'DEFAULT');
+    b.value = formatDictSync('sys_yes_or_no', 'DEFAULT');
   });
-const a = formatDictComputed('sys_job_group', value);
+const a = formatDictComputed('sys_yes_or_no', value);
 
 function toggle() {
   value.value = value.value == 'DEFAULT' ? 'SYSTEM' : 'DEFAULT';
@@ -23,6 +23,7 @@ setInterval(() => {
 
 <template>
   <div>
+    {{ $app_name }}
     <p>
       value: {{ value }}
     </p>

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useEventListener, useThrottleFn } from '@vueuse/core';
 
-useVModel;
 const visibilityHeight = 300;
 const cubic = (value: number): number => {
   return value ** 3;
@@ -37,7 +36,10 @@ useEventListener(document, 'scroll', handleScrollThrottled);
 
 <template>
   <Transition name="bounce">
-    <button v-if="visible" @click="scrollToTop">
+    <button
+      v-if="visible"
+      @click="scrollToTop"
+    >
     </button>
   </Transition>
 </template>

@@ -4,6 +4,7 @@ import { ContentTypeEnum, HttpRequest, type HttpRequestConfig, HttpRequestMethod
 
 import axios, { AxiosError } from 'axios';
 import { saveAs } from 'file-saver';
+import { isObject, merge } from 'lodash-es';
 
 interface CustomHeaders {
   /**
@@ -55,12 +56,10 @@ export const request = new HttpRequest<CustomHeaders, NativeResponseHeaders>({
     isReturnNativeResponse: false,
     withToken: true,
   },
-
   onUploadProgress(progressEvent) {
     console.log(progressEvent);
     // 处理原生进度事件
   },
-
   // `onDownloadProgress` 允许为下载处理进度事件
   // 浏览器专属
   onDownloadProgress(progressEvent) {
@@ -69,9 +68,7 @@ export const request = new HttpRequest<CustomHeaders, NativeResponseHeaders>({
       const progress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
       console.log(`Download Progress: ${progress}%`);
     }
-    // 处理原生进度事件
   },
-
 },
 {
   request(config) {
@@ -183,6 +180,50 @@ function generateKey(config: AxiosRequestConfig) {
   return `${url}-${method}-${JSON.stringify(method === 'get' ? params : data)}`;
 }
 
+function handleError(msg: string) {
+  throw new Error(msg);
+}
+
+function transformRequest(params?: object) {
+  if (!isObject(params)) return '';
+  let result = '';
+  for (const propName of Object.keys(params)) {
+    const value = params[propName as keyof typeof params];
+    const part = `${encodeURIComponent(propName)}=`;
+    if (value !== null && typeof value !== 'undefined') {
+      if (typeof value === 'object') {
+        for (const key of Object.keys(value)) {
+          if (value[key] !== null && typeof value[key] !== 'undefined') {
+            const params = `${propName}[${key}]`;
+            const subPart = `${encodeURIComponent(params)}=`;
+            result += `${subPart + encodeURIComponent(value[key])}&`;
+          }
+        }
+      }
+      else {
+        result += `${part + encodeURIComponent(value)}&`;
+      }
+    }
+  }
+  return result;
+}
+
+export function download(config: Parameters<typeof request.request>[0]) {
+  const c = merge(config, {
+    transformRequest: [
+      (params: object) => {
+        return transformRequest(params);
+      },
+    ],
+    responseType: 'blob',
+    headers: {
+      isReturnNativeResponse: true as const,
+      'Content-Type': ContentTypeEnum.FORM_URLENCODED,
+    },
+  });
+  return request.request({ ...c });
+}
+
 function getAxiosErrorErrorMessage(code?: string): string {
   switch (code) {
     case 'ERR_BAD_OPTION_VALUE':
@@ -241,8 +282,4 @@ function getSystemErrorMessage(status: number) {
     default:
       return '未知错误';
   }
-}
-
-function handleError(msg: string) {
-  throw new Error(msg);
 }

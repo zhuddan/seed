@@ -1,7 +1,24 @@
 <template>
-  <router-link class="app-logo" to="/">
-    <svg width="60" height="60" xmlns="http://www.w3.org/2000/svg">
-      <text x="30" y="30" font-size="16" font-family="Crosterian" font-weight="900" fill="#42b883" text-anchor="middle" alignment-baseline="middle" style="font-style: italic;">SEED</text>
+  <router-link
+    class="app-logo"
+    to="/"
+  >
+    <svg
+      width="60"
+      height="60"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <text
+        x="30"
+        y="30"
+        font-size="16"
+        font-family="Crosterian"
+        font-weight="900"
+        fill="#42b883"
+        text-anchor="middle"
+        alignment-baseline="middle"
+        style="font-style: italic;"
+      >SEED</text>
     </svg>
   </router-link>
 </template>

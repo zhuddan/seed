@@ -3,31 +3,7 @@ import type { FormatOptions } from '@/utils/helpers/format';
 import { type MaybeRefOrGetter, computed, reactive, toRaw, toRefs } from 'vue';
 
 export type DictTypes =
-| 'disinfect_mode' // '消毒模式'
-| 'growth_type' // '和孩子互动'
-| 'growth_child_interaction' // '和孩子互动'
-| 'growth_child_trouble' // '孩子成长过程中遇到的问题'
-| 'growth_parent_hometime' // '在家时间'
-| 'growth_parenting_styles' // '育儿方式'
-| 'growth_production_way' // '生产方式'
-| 'growth_touch_type' // '抚触'
-| 'sys_abnormal_status' // '晨检异常状态'
-| 'sys_abnormal_type' // '晨检异常情况'
-| 'sys_card_type' // '证件类型'
-| 'sys_child_relationship' // '与学员的关系'
-| 'sys_course_type' // '课程类型'
-| 'sys_edu_type' // '学历'
-| 'sys_job_group' // '任务分组'
-| 'sys_job_status' // '任务状态'
-| 'sys_normal_disable' // '系统开关'
-| 'sys_show_hide' // '菜单状态'
-| 'sys_teacher_type' // '老师类型'
-| 'sys_user_sex' // '性别'
-| 'sys_work_mode' // '工作模式'
-| 'sys_work_standard' // '报酬标准'
 | 'sys_yes_or_no' // '系统是否'
-| 'child_growth' // 成长标准
-| 'leave_type' // 请假类型
 ;
 
 export interface OriginDictData {
@@ -202,8 +178,9 @@ export function useDicts<DT extends DictTypes = DictTypes>(
         dictsData[dt] = result;
 
         if (__DEV__) {
-          if (!result.length)
-            logger.warn(`字典 [${dt}] 获取到的值为空 []`);
+          if (!result.length) {
+
+          }
         }
       })
       .catch((error) => {

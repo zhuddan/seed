@@ -27,7 +27,6 @@ export function setParams(baseUrl: string, params: Record<string, any>): string 
   if (!Object.keys(params).length) return baseUrl;
   let parameters = '';
   for (const key in params) parameters += `${key}=${encodeURIComponent(params[key])}&`;
-
   parameters = parameters.replace(/&$/, '');
   return /\?$/.test(baseUrl) ? baseUrl + parameters : baseUrl.replace(/\/?$/, '?') + parameters;
 }
