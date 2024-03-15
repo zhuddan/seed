@@ -12,7 +12,7 @@ const icons = [
 
 <template>
   <div class="container">
-    <h1>{{ $app_name }}</h1>
+    <h1>{{ APP_TITLE }}</h1>
     <div class="box">
       <div
         v-for="(item, index) in icons"

@@ -1,1 +1,2 @@
-export * from './global-properties';
+export { appGlobalProperties } from './global-properties';
+

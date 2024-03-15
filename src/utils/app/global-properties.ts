@@ -1,11 +1,21 @@
 import type { App } from 'vue';
 
-type $GlobalProperties = {
+/**
+ *  限制所有 vue 实例属性
+ */
+type GlobalProperties = {
   [P in `$${string}`]: any;
+} & {
+  [P in `__${Uppercase<string>}`]: any;
+} & {
+  [P in `${Uppercase<string>}`]: any;
 };
 
-const globalProperties: $GlobalProperties = {
-  $app_name: '哈哈哈',
+const globalProperties: GlobalProperties = {
+  __DEV__,
+  APP_TITLE,
+  APP_API_URL,
+  APP_STATIC_URL,
 };
 
 export type AppGlobalProperties = typeof globalProperties;
