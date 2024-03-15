@@ -1,12 +1,11 @@
 <script setup lang="ts">
 const d = defineAsyncComponent;
-
 const icons = [
   // @iconify/json
   d(() => import('~icons/ic/baseline-plus')),
-  d(() => import('~icons/skill-icons/nginx')),
+  // d(() => import('~icons/skill-icons/nginx')),
   // 本地svg
-  d(async () => h('span', { innerHTML: (await import('~icons/icon/download-count?raw'))['default'] })),
+  // d(async () => h('span', { innerHTML: (await import('~icons/icon/download-count?raw'))['default'] })),
 ];
 </script>
 
