@@ -11,8 +11,7 @@
       "@/*": ["./src/*"]
     },
     "types": [
-      "unplugin-icons/types/vue",
-      "element-plus/global"
+      "unplugin-icons/types/vue"
     ]
   }
 }

@@ -8,6 +8,7 @@ declare global {
   const EffectScope: typeof import('vue')['EffectScope']
   const EventEmitter: typeof import('../utils/helpers/EventEmitter')['EventEmitter']
   const ORDER_TABS: typeof import('../utils/const/index')['ORDER_TABS']
+  const appGlobalProperties: typeof import('../utils/app/global-properties')['appGlobalProperties']
   const asyncComputed: typeof import('@vueuse/core')['asyncComputed']
   const autoResetRef: typeof import('@vueuse/core')['autoResetRef']
   const computed: typeof import('vue')['computed']
