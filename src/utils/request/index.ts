@@ -130,7 +130,7 @@ export const request = new HttpRequest<CustomHeaders, NativeResponseHeaders>({
         else {
           const resText = await blob.text();
           const rspObj = JSON.parse(resText);
-          handleError(rspObj.msg || getSystemErrorMessage(rspObj.code));
+          return handleError(rspObj.msg || getSystemErrorMessage(rspObj.code));
         }
       }
 
@@ -147,9 +147,10 @@ export const request = new HttpRequest<CustomHeaders, NativeResponseHeaders>({
     if (responseData.code === 401) {
       removeCacheToken();
     }
+
     const msg = responseData.msg || getSystemErrorMessage(responseData.code);
 
-    handleError(msg);
+    return handleError(msg);
   },
 
   responseError(error) {
