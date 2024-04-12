@@ -10,9 +10,6 @@ declare module 'vue' {
     AppLogo: typeof import('./../components/AppLogo/AppLogo.vue')['default']
     BackTop: typeof import('./../components/BackTop/BackTop.vue')['default']
     BlankView: typeof import('./../components/BlankView/BlankView.vue')['default']
-    IIconLogo: typeof import('~icons/icon/logo')['default']
-    ITwemojiFlagAruba: typeof import('~icons/twemoji/flag-aruba')['default']
-    ITwemojiFlagChina: typeof import('~icons/twemoji/flag-china')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }
