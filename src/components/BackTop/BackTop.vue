@@ -53,7 +53,6 @@ useEventListener(document, 'scroll', handleScrollThrottled);
     right: 100px;
     bottom: 100px;
     color: #fff;
-    background-color: var(--color-primary);
     border: 0;
 
     &:hover {

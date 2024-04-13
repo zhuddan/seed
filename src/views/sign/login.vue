@@ -49,36 +49,42 @@ getCode();
 
 <template>
   <div style="overflow: hidden">
-    <div class="login">
+    <div
+      class="login w-320 mx-auto mt-80"
+    >
       <input
         id="username"
         v-model="username"
+        class="input w-full"
         type="text"
         placeholder="用户名"
       >
       <input
         id="password"
         v-model="password"
+        class="input mt-20 w-full"
         type="text"
         placeholder="密码"
       >
-      <div class="code-input-container clearfix">
+      <div class="flex h-32 mt-20 items-center justify-between">
         <input
           id="code"
           v-model="code"
           type="number"
+          class="input w-full"
           placeholder="验证码"
           @keydown.enter="handleLogin"
         >
         <img
           :src="codeUrl"
           object-fit="fill"
+          class="h-full ml-10"
           @click="getCode"
         >
       </div>
       <button
         :disabled="loading"
-        class="login-button btn-primary"
+        class="btn w-full mt-10"
         @click="handleLogin"
       >
         {{
@@ -90,39 +96,5 @@ getCode();
 </template>
 
 <style scoped lang="scss">
-  .login {
-    margin: 200px auto 0;
-    width: 300px;
-  }
 
-  input{
-    height: 40px;
-    width: 100%;
-    margin-bottom: 10px;
-  }
-
-  .code-input-container {
-    display: flex;
-
-    input {
-      width: 131px;
-      margin-right: 8px;
-      margin-bottom: 0;
-      flex: 1;
-    }
-
-    img {
-      height: 40px;
-      display: block;
-      width: 106px;
-    }
-  }
-
-  .login-button {
-    width: 100%;
-    font-size: 16px;
-    margin-top: 20px;
-    height: 40px;
-    box-sizing: border-box;
-  }
 </style>

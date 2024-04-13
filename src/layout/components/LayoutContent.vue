@@ -28,24 +28,16 @@ router.afterEach((a) => {
 </template>
 
 <style scoped lang="scss">
-  @import '@/assets/styles/var.scss';
+.content-wrapper {
+  flex: 1;
+  background: #f6f6f6;
+}
 
-  @media screen and (max-width: $screen-md) {
-    .content-wrapper {
-      grid-template-columns: auto !important;
-    }
+#content {
+  overflow-x: hidden;
+  height: var(--app-content-height);
+  .layout{
+    padding: var(--app-content-padding);
   }
-
-  .content-wrapper {
-    flex: 1;
-    background: #f6f6f6;
-  }
-
-  #content {
-    overflow-x: hidden;
-    height: var(--app-content-height);
-    .layout{
-      padding: var(--app-content-padding);
-    }
-  }
+}
 </style>

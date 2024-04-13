@@ -1,4 +1,5 @@
 import './assets/styles/index.scss';
+import 'virtual:uno.css';
 
 import App from './App.vue';
 import { say } from './directive';
@@ -6,7 +7,6 @@ import router from './router';
 
 import { createPinia } from 'pinia';
 import { createApp } from 'vue';
-
 function initApp() {
   const app = createApp(App);
   app.use(createPinia());

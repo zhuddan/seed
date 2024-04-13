@@ -1,5 +1,14 @@
 // cspell:disable
 {
+  "extends": [
+    "plugin:import/recommended",
+    "plugin:eslint-comments/recommended",
+    "plugin:vue/vue3-essential",
+    "plugin:vue/vue3-strongly-recommended",
+    "plugin:vue/vue3-recommended",
+    "plugin:import/typescript",
+    "plugin:@typescript-eslint/recommended"
+  ],
   "overrides": [
     {
       "files": ["*.vue"],
@@ -24,15 +33,6 @@
   ],
   "reportUnusedDisableDirectives": true,
   "env": { "es6": true, "browser": true, "node": true },
-  "extends": [
-    "plugin:import/recommended",
-    "plugin:eslint-comments/recommended",
-    "plugin:vue/vue3-essential",
-    "plugin:vue/vue3-strongly-recommended",
-    "plugin:vue/vue3-recommended",
-    "plugin:import/typescript",
-    "plugin:@typescript-eslint/recommended"
-  ],
   "plugins": ["simple-import-sort", "unused-imports"],
   "settings": {
     "import/resolver": {

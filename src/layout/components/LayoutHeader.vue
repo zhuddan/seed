@@ -1,17 +1,10 @@
 <script setup lang="ts">
 import AppLogo from '@/components/AppLogo/AppLogo.vue';
-// import { useAppStore } from '@/store/modules/app';
-// import { useUserStore } from '@/store/modules/user';
 
 defineOptions({
   name: 'LayoutHeader',
 });
 const userStore = useUserStore();
-
-// const appStore = useAppStore();
-// const userStore = useUserStore();
-// const isLogin = computed(() => !!userStore.user);
-// const userName = computed(() => userStore.user?.userName);
 
 const router = useRouter();
 
@@ -24,14 +17,20 @@ async function handleLogout() {
 
 <template>
   <header class="layout-header">
-    <div class="layout-header_inner container flex items-center">
+    <div class="layout-header_inner container flex items-center w-full">
       <AppLogo />
       <div class="flex-1"></div>
       <nav class="">
-        <router-link to="/">
+        <router-link
+          to="/"
+          class="text-[#666] [&.router-link-active]:text-primary"
+        >
           home
         </router-link>
-        <router-link to="/about">
+        <router-link
+          class="text-[#666] [&.router-link-active]:text-primary"
+          to="/about"
+        >
           about
         </router-link>
         <router-link
@@ -48,7 +47,7 @@ async function handleLogout() {
       >
         <span>{{ userStore.user?.userName?.toLocaleUpperCase() }}</span>
         <button
-          class="btn-primary"
+          class="btn"
           @click="handleLogout"
         >
           退出登录
@@ -59,9 +58,7 @@ async function handleLogout() {
 </template>
 
 <style scoped lang="scss">
-  @import '@/assets/styles/var.scss';
-
-  .layout-header {
+.layout-header {
     background: white;
     position: sticky;
     box-sizing: border-box;
@@ -75,10 +72,10 @@ async function handleLogout() {
   .layout-header_inner {
     height: var(--app-header-hight);
     border-bottom: 1px solid #ebebeb;
+    box-sizing: border-box;
   }
 
   .user-info {
-    color: var(--color-primary);
 
     button {
       margin-left: 10px;
@@ -125,7 +122,6 @@ async function handleLogout() {
 
       &.router-link-exact-active{
         border-bottom: 4px solid;
-        color: var(--color-primary);
         font-weight: 600;
       }
     }

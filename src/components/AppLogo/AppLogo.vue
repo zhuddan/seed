@@ -11,10 +11,10 @@
       <text
         x="30"
         y="30"
-        font-size="16"
         font-family="Crosterian"
         font-weight="900"
         fill="#42b883"
+        class="fill-primary"
         text-anchor="middle"
         alignment-baseline="middle"
         style="font-style: italic;"
@@ -36,10 +36,6 @@
 
   span {
     line-height: 60px;
-    // color: var(--color-primary);
-    // @media screen and (min-width: 900px) {
-    //   display: inline-block;
-    // }
   }
 
   &:hover {
