@@ -62,16 +62,12 @@ export const request = new HttpRequest<CustomConfig>({
 {
   request(config) {
     /**
-     *  axios 请求 把 headers 上的 true 变成了 'true'
-     */
-    /**
      * token
      */
     const token = getCacheToken();
     if (config?.withToken && token) {
       config.headers![tokenKey] = `${tokenKeyScheme} ${token}`;
     }
-
     /**
      * 忽略重复请求。第一个请求未完成时进行第二个请求，第一个会被被取消
      */
@@ -80,14 +76,12 @@ export const request = new HttpRequest<CustomConfig>({
       const cancelToken = new axios.CancelToken(c => cancelInterceptor(key, c));
       config.cancelToken = cancelToken;
     }
-
     /**
      * 添加时间戳到 get 请求
      */
     if (config.method?.toUpperCase() == HttpRequestMethodsEnum.GET) {
       config.params = { _t: `${Date.now()}`, ...config.params };
     }
-
     return config;
   },
 
