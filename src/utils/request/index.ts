@@ -6,31 +6,20 @@ import axios, { AxiosError } from 'axios';
 import { saveAs } from 'file-saver';
 import { isObject, merge } from 'lodash-es';
 
-export interface CustomHeaders {
+export interface CustomConfig {
   /**
    * @description 是否需要token
    */
   withToken?: boolean;
-  /**
-  * @description 返回原生响应 AxiosResponse<T> 默认false
-  */
-  isReturnNativeResponse?: boolean;
   /**
   * @description 忽略重复请求。第一个请求未完成时进行第二个请求，第一个会被被取消
   *              参考 axios 取消请求 https://axios-http.com/zh/docs/cancellation
   */
   ignoreRepeatRequest?: boolean;
   /**
-   * get 请求加时间戳
-   */
-  withTimestamp?: boolean;
-  /**
    * 下载文件名称
    */
   filename?: string;
-};
-interface NativeResponseHeaders {
-  isReturnNativeResponse: true;
 };
 
 const tokenKey = 'Authorization';
@@ -47,13 +36,13 @@ function getHeaderFileName(headers: Record<string, any>) {
   return '';
 }
 
-export const request = new HttpRequest<CustomHeaders, NativeResponseHeaders>({
+export const request = new HttpRequest<CustomConfig>({
   baseURL: APP_API_URL,
   timeout: 15 * 1000,
   headers: {
     'Content-Type': ContentTypeEnum.JSON,
     ignoreRepeatRequest: false,
-    isReturnNativeResponse: false,
+    getResponse: false,
     withToken: true,
   },
   onUploadProgress(progressEvent) {
@@ -79,14 +68,14 @@ export const request = new HttpRequest<CustomHeaders, NativeResponseHeaders>({
      * token
      */
     const token = getCacheToken();
-    if (config.headers?.withToken && `${config.headers?.withToken}` === 'true' && token) {
+    if (config?.withToken && token) {
       config.headers![tokenKey] = `${tokenKeyScheme} ${token}`;
     }
 
     /**
      * 忽略重复请求。第一个请求未完成时进行第二个请求，第一个会被被取消
      */
-    if (config.headers?.ignoreRepeatRequest && `${config.headers?.ignoreRepeatRequest}` === 'true') {
+    if (config.ignoreRepeatRequest) {
       const key = generateKey({ ...config });
       const cancelToken = new axios.CancelToken(c => cancelInterceptor(key, c));
       config.cancelToken = cancelToken;
@@ -108,12 +97,12 @@ export const request = new HttpRequest<CustomHeaders, NativeResponseHeaders>({
 
   async response(_response) {
     cancelMap.delete(generateKey(_response.config));
-    const config = _response.config as HttpRequestConfig<CustomHeaders>;
-    if (config.headers?.isReturnNativeResponse) {
+    const config = _response.config as HttpRequestConfig<CustomConfig>;
+    if (config.getResponse) {
       // 处理下载文件
       if (_response.config.responseType === 'blob') {
         const blob = _response.data as unknown as Blob;
-        const filename = config.headers?.filename;
+        const filename = config.filename;
         if (_response.data && blob.type != 'application/json') {
           if (_response.data?.type && !filename) {
             saveAs(_response.data as unknown as Blob);
@@ -223,7 +212,7 @@ function transformRequest(params?: object) {
 }
 
 export function download(config: Parameters<typeof request.request>[0]) {
-  const c = merge(config, {
+  const downloadBaseConfig: typeof config = {
     transformRequest: [
       (params: object) => {
         return transformRequest(params);
@@ -231,11 +220,11 @@ export function download(config: Parameters<typeof request.request>[0]) {
     ],
     responseType: 'blob',
     headers: {
-      isReturnNativeResponse: true as const,
       'Content-Type': ContentTypeEnum.FORM_URLENCODED,
     },
-  });
-  return request.request({ ...c });
+    getResponse: true,
+  };
+  return request.request(merge({ }, downloadBaseConfig, config));
 }
 
 function getAxiosErrorErrorMessage(code?: string): string {

@@ -32,8 +32,6 @@ export function login(username: string, password: string, code: string, uuid: st
 export function getInfo() {
   return request.get<UserInfo>({
     url: '/system/user/getInfo',
-    headers: {
-      withToken: true,
-    },
+    withToken: true,
   });
 }
