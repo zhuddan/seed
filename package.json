@@ -68,6 +68,7 @@
     "sass": "^1.72.0",
     "ssh2-sftp-client": "^10.0.3",
     "typescript": "~5.3.3",
+    "unocss": "^0.59.4",
     "unplugin-auto-import": "^0.17.5",
     "unplugin-icons": "^0.18.5",
     "unplugin-vue-components": "^0.26.0",
